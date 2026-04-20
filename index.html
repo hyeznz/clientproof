@@ -34,17 +34,17 @@
     --ink-40: rgba(77,77,77,0.4);
     --ink-10: rgba(77,77,77,0.15);
 
-    /* 통일된 타이포 — 이제 카드 크기별 차등 없음 */
+    /* 통일된 타이포 — 카드 크기별 차등 없음, 모바일 기준 */
     --text-micro: 11px;     /* 좌상단 작은 키워드 */
     --text-xs: 11px;
     --text-sm: 13px;
-    --text-keyword: 32px;   /* 모든 카드 키워드 통일 */
+    --text-keyword: 26px;   /* 모바일 좁은 카드에서 wrap 방지 위해 축소 */
 
     /* 카드 높이 단위 */
     --row-unit: 40px;
     --gap: 8px;
     --radius: 14px;      /* 카드 모서리 둥글게 */
-    --pad: 20px;
+    --pad: 18px;         /* 카드 내부 여백 */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -285,10 +285,13 @@
     font-family: 'Pretendard Variable', Pretendard, sans-serif;
     font-weight: 800;
     font-size: var(--text-keyword);
-    letter-spacing: -0.035em;
-    line-height: 1.15;        /* 줄 간격 확보 */
+    letter-spacing: -0.04em;
+    line-height: 1.18;          /* 줄 간격 확보 */
     text-align: left;
-    white-space: pre-line;    /* \n을 줄바꿈으로 렌더 */
+    white-space: pre-line;      /* \n을 줄바꿈으로 렌더 */
+    word-break: keep-all;       /* 한글 어절 단위 유지 (자동 wrap 완화) */
+    overflow-wrap: break-word;  /* 그래도 넘치면 단어 단위 wrap */
+    hyphens: none;
   }
 
   /* ============ 하단 룰 라인 ============ */
