@@ -57,7 +57,10 @@
     -webkit-font-smoothing: antialiased;
     word-break: keep-all;
     overflow-x: hidden;
-    padding-bottom: 40px;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     font-feature-settings: "ss18";
   }
 
@@ -221,7 +224,6 @@
     padding: var(--pad);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;  /* 상단 메타 / 하단 키워드 분리 */
     cursor: pointer;
   }
 
@@ -280,19 +282,23 @@
     opacity: 0.8;
   }
 
-  /* 좌하단 메인 키워드 — 모든 카드 동일 크기, 2줄 구조 */
+  /* 좌하단 메인 키워드 — 카드 크기별 폰트 차등 (2줄 안정 유지) */
   .cell-keyword {
     font-family: 'Pretendard Variable', Pretendard, sans-serif;
     font-weight: 800;
-    font-size: var(--text-keyword);
     letter-spacing: -0.04em;
-    line-height: 1.18;          /* 줄 간격 확보 */
+    line-height: 1.18;
     text-align: left;
-    white-space: pre-line;      /* \n을 줄바꿈으로 렌더 */
-    word-break: keep-all;       /* 한글 어절 단위 유지 (자동 wrap 완화) */
-    overflow-wrap: break-word;  /* 그래도 넘치면 단어 단위 wrap */
+    white-space: pre-line;
+    word-break: keep-all;
+    overflow-wrap: break-word;
     hyphens: none;
+    margin-top: auto;           /* 하단으로 밀기 */
   }
+  /* 카드 높이별 키워드 크기 — 좁은 폭에서 2줄 wrap 방지 */
+  .cell.h-s .cell-keyword { font-size: 22px; }
+  .cell.h-m .cell-keyword { font-size: 24px; }
+  .cell.h-l .cell-keyword { font-size: 26px; }
 
   /* ============ 하단 룰 라인 ============ */
   .bottomline {
@@ -317,7 +323,6 @@
   /* ============ 데스크탑 ============ */
   @media (min-width: 768px) {
     :root {
-      --text-keyword: 32px;  /* 데스크탑에서도 동일 크기 유지 */
       --row-unit: 50px;
       --pad: 28px;
     }
@@ -325,6 +330,10 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
+    /* 데스크탑은 카드 폭 여유 → 키워드 더 큼 */
+    .cell.h-s .cell-keyword { font-size: 28px; }
+    .cell.h-m .cell-keyword { font-size: 34px; }
+    .cell.h-l .cell-keyword { font-size: 40px; }
     .header, .title-block, .banner, .filter-bar, .bento-section, .footer-info {
       padding-left: 32px;
       padding-right: 32px;
@@ -455,7 +464,7 @@
 <!-- ========== 하단 룰 라인 ========== -->
 <div class="bottomline"></div>
 <div class="footer-info mono">
-  <span>MOVING CARRY CO. — REVIEW PAGE / V02W01</span>
+  <span>MOVING CARRY CO. — REVIEW PAGE / V02W02</span>
   <span>VERIFIED BY 강봉원 CAFE</span>
 </div>
 
