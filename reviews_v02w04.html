@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F6F7F9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>강봉원 검증 후기 — 이사짐캐리</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ===== 새 팔레트 (4색 시스템) =====
+       카드색과 글자색의 페어링 규칙:
+       - black(#171717)  카드 → orange(#FE5F15) 글자
+       - orange(#FE5F15) 카드 → black(#171717) 글자
+       - dark gray(#4D4D4D)  카드 → light gray(#DEDEDE) 글자
+       - light gray(#DEDEDE) 카드 → dark gray(#4D4D4D) 글자
+    */
+    --black: #171717;       /* 살짝 따뜻한 다크 */
+    --orange: #FE5F15;      /* 비비드 오렌지 */
+    --dark-gray: #4D4D4D;   /* 다크 그레이 */
+    --light-gray: #DEDEDE;  /* 라이트 그레이 */
+
+    /* 배경 = 레퍼런스 이미지의 실제 배경 픽셀값 (#F6F7F9, 아주 연한 쿨 그레이) */
+    --bg: #F6F7F9;
+
+    /* 텍스트 계조용 (dark-gray 기반) */
+    --ink-80: rgba(77,77,77,0.85);
+    --ink-60: rgba(77,77,77,0.65);
+    --ink-40: rgba(77,77,77,0.4);
+    --ink-10: rgba(77,77,77,0.15);
+
+    /* 통일된 타이포 — 카드 크기별 차등 없음, 모바일 기준 */
+    --text-micro: 11px;     /* 좌상단 작은 키워드 */
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-keyword: 26px;   /* 모바일 좁은 카드에서 wrap 방지 위해 축소 */
+
+    /* 카드 높이 단위 */
+    --row-unit: 40px;
+    --gap: 8px;
+    --radius: 14px;      /* 카드 모서리 둥글게 */
+    --pad: 18px;         /* 카드 내부 여백 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+    overflow-x: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    font-feature-settings: "ss18";
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0;
+  }
+
+  /* ============ 상단 룰 라인 ============ */
+  .topline {
+    height: 1px;
+    background: var(--black);
+    margin: 0 16px;
+    max-width: 1280px;
+  }
+  .topline-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  .topline-wrap .topline { margin: 0; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 16px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .header-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-micro);
+    letter-spacing: 0.15em;
+    color: var(--black);
+    font-weight: 500;
+  }
+  .header-logo {
+    width: 28px; height: 28px;
+    background: var(--black);
+    color: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pretendard Variable', Pretendard, sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    border-radius: 50%;
+  }
+
+  /* ============ 거대 타이틀 블록 ============ */
+  /* Pretendard로 변경 — 한글 타이틀도 Pretendard ExtraBold */
+  .title-block {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px 4px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: end;
+  }
+  .main-title {
+    font-family: 'Pretendard Variable', Pretendard, sans-serif;
+    font-weight: 900;
+    font-size: clamp(64px, 19vw, 140px);
+    line-height: 0.88;
+    letter-spacing: -0.055em;
+    color: var(--black);
+  }
+  .title-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-xs);
+    line-height: 1.35;
+    text-align: right;
+    color: var(--black);
+    padding-bottom: 8px;
+  }
+  .title-meta strong {
+    font-weight: 700;
+    font-size: 14px;
+    display: block;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============ 오렌지 배너 ============ */
+  .banner {
+    max-width: 1280px;
+    margin: 12px auto 0;
+    padding: 0 16px;
+  }
+  .banner-inner {
+    background: var(--orange);
+    color: var(--black);
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-micro);
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .banner-inner .sep {
+    margin: 0 6px;
+    opacity: 0.7;
+  }
+
+  /* ============ 필터 바 ============ */
+  .filter-bar {
+    max-width: 1280px;
+    margin: 16px auto 6px;
+    padding: 0 16px;
+  }
+  .type-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .type-chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--black);
+    font-family: 'Pretendard Variable', Pretendard, sans-serif;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--black);
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .chip:hover { background: var(--black); color: var(--light-gray); }
+  .chip.active {
+    background: var(--black);
+    color: var(--light-gray);
+  }
+
+  /* ============ 벤토 그리드 ============ */
+  .bento-section {
+    padding: 12px 16px 40px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: var(--row-unit);
+    gap: var(--gap);
+    grid-auto-flow: dense;
+  }
+
+  .cell {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    padding: var(--pad);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+
+  /* 높이 시스템 */
+  .cell.h-s { grid-row: span 4; }
+  .cell.h-m { grid-row: span 6; }
+  .cell.h-l { grid-row: span 8; }
+
+  /* ===== 색상 변형 (4가지, 각 카드색에 짝지어진 글자색) =====
+     v-light  : light-gray 배경 + dark-gray 글자 (흰색 대신 기본 밝은 카드)
+     v-dark   : dark-gray 배경 + light-gray 글자
+     v-orange : orange 배경 + black 글자
+     v-black  : black 배경 + orange 글자 (유일하게 액센트색 글자)
+  */
+  .cell.v-light {
+    background: var(--light-gray);
+    color: var(--dark-gray);
+  }
+  .cell.v-dark {
+    background: var(--dark-gray);
+    color: var(--light-gray);
+  }
+  .cell.v-orange {
+    background: var(--orange);
+    color: var(--black);
+  }
+  .cell.v-black {
+    background: var(--black);
+    color: var(--orange);
+  }
+
+  /* ===== 카드 내부: 레퍼런스 구조대로 요소 3개만 ===== */
+  /* 상단 영역: 좌측 작은 키워드 + 우측 화살표 */
+  .cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* 좌상단 작은 키워드 (레퍼런스의 "Mila Torres" 자리) */
+  .cell-sub {
+    font-family: 'Pretendard Variable', Pretendard, sans-serif;
+    font-size: var(--text-micro);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    opacity: 0.7;
+  }
+
+  /* 우상단 화살표 (↗) */
+  .cell-arrow {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  /* 좌하단 메인 키워드 — 카드 크기별 폰트 차등 (2줄 안정 유지) */
+  .cell-keyword {
+    font-family: 'Pretendard Variable', Pretendard, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.18;
+    text-align: left;
+    white-space: pre-line;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    hyphens: none;
+    margin-top: auto;           /* 하단으로 밀기 */
+  }
+  /* 카드 높이별 키워드 크기 — 좁은 폭에서 2줄 wrap 방지 */
+  .cell.h-s .cell-keyword { font-size: 22px; }
+  .cell.h-m .cell-keyword { font-size: 24px; }
+  .cell.h-l .cell-keyword { font-size: 26px; }
+
+  /* ============ 하단 룰 라인 ============ */
+  .bottomline {
+    height: 1px;
+    background: var(--black);
+    max-width: 1280px;
+    margin: 24px auto 0;
+  }
+  .footer-info {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-micro);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+  }
+
+  /* ============ 데스크탑 ============ */
+  @media (min-width: 768px) {
+    :root {
+      --row-unit: 50px;
+      --pad: 28px;
+    }
+    .bento {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    /* 데스크탑은 카드 폭 여유 → 키워드 더 큼 */
+    .cell.h-s .cell-keyword { font-size: 28px; }
+    .cell.h-m .cell-keyword { font-size: 34px; }
+    .cell.h-l .cell-keyword { font-size: 40px; }
+    .header, .title-block, .banner, .filter-bar, .bento-section, .footer-info {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+    .topline, .bottomline {
+      margin-left: 32px;
+      margin-right: 32px;
+      max-width: calc(1280px - 64px);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .bento {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* ============ 진입 애니메이션 (Staggered Reveal + Spring + Scale/Opacity) ============
+     카드가 한 번에 뜨지 않고 그리드 순서대로 0.05s씩 딜레이,
+     도착 시 미세하게 오버슈트하는 스프링 이징,
+     등장 시 scale(0.95) → 1.0 과 opacity(0 → 1)로 입체감 부여
+  */
+  .cell {
+    animation: rise .7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    will-change: transform, opacity;
+    /* 각 카드마다 인덱스 기반 delay (JS에서 --card-index 세팅) */
+    animation-delay: calc(var(--card-index, 0) * 0.05s);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  /* ============ 스크롤 시 Column Parallax ============
+     왼쪽 열과 오른쪽 열이 살짝 다른 속도로 움직여 입체감.
+     --parallax-y는 JS가 스크롤 속도에 따라 실시간 갱신.
+     카드마다 --parallax-mult(0.8~1.2) 편차로 액체 유영감.
+  */
+  html, body {
+    overscroll-behavior-y: contain;
+  }
+
+  .cell {
+    /* 진입 애니메이션이 끝난 후에도 transform 이어받도록 합성 */
+    transition: transform .8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* 스크롤 중일 때만 parallax transform 활성 (진입 애니메이션과 충돌 방지) */
+  .cell.settled {
+    transform: translate3d(0, calc(var(--parallax-y, 0px) * var(--parallax-mult, 1)), 0);
+  }
+  /* hover 효과는 mouse/trackpad 기기에서만 */
+  @media (hover: hover) and (pointer: fine) {
+    .cell.settled:hover {
+      transform: translate3d(0, calc(var(--parallax-y, 0px) * var(--parallax-mult, 1) - 2px), 0);
+      transition: transform .2s ease;
+    }
+  }
+
+  /* reduced-motion 존중 */
+  @media (prefers-reduced-motion: reduce) {
+    .cell {
+      animation: none;
+      transition: none;
+      transform: none;
+    }
+    .cell.settled {
+      transform: none;
+    }
+  }
+
+  /* ============ Floating Card Modal ============ */
+  /* 오버레이: 어둡게 + 블러 (Fuse Wallet 스타일) */
+  .sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0);
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    transition: background .4s ease, -webkit-backdrop-filter .4s ease, backdrop-filter .4s ease;
+  }
+  .sheet-overlay.open {
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.25);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  /* 시트: 화면보다 살짝 작은 floating card — 4모퉁이 라운딩 */
+  .sheet {
+    position: fixed;
+    z-index: 101;
+    /* 좌우 12px, 하단 12px 여백 → 4모퉁이 다 보이는 floating 느낌 */
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    max-height: calc(85vh - 24px);
+    background: var(--light-gray);
+    border-radius: 24px;          /* 동일 라운딩 4모퉁이 */
+    transform: translateY(calc(100% + 24px));  /* 아래로 숨김 */
+    transition: transform .5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity .3s ease;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+  .sheet.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .sheet.dragging {
+    transition: none;
+  }
+
+  /* 데스크탑: 중앙 정렬 + 최대 너비 */
+  @media (min-width: 768px) {
+    .sheet {
+      left: 50%;
+      right: auto;
+      bottom: auto;
+      top: 50%;
+      transform: translate(-50%, calc(-50% + 60px));
+      width: 520px;
+      max-width: calc(100vw - 48px);
+      max-height: 80vh;
+    }
+    .sheet.open {
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  /* 드래그 핸들 */
+  .sheet-handle {
+    flex-shrink: 0;
+    padding: 12px 0 4px;
+    display: flex;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+  }
+  .sheet-handle::before {
+    content: '';
+    width: 36px;
+    height: 4px;
+    background: var(--dark-gray);
+    opacity: 0.2;
+    border-radius: 2px;
+  }
+  @media (min-width: 768px) {
+    .sheet-handle { display: none; }
+  }
+
+  /* 닫기 버튼 */
+  .sheet-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--dark-gray);
+    opacity: 0.15;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    color: var(--black);
+    transition: opacity .2s;
+  }
+  .sheet-close:hover { opacity: 0.3; }
+  .sheet-close svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* 시트 상단 (타이포그래피 섹션) */
+  .sheet-header {
+    flex-shrink: 0;
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--ink-10);
+  }
+  .sheet-sub {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--dark-gray);
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+  .sheet-title {
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -0.04em;
+    line-height: 1.18;
+    white-space: pre-line;
+    word-break: keep-all;
+    color: var(--black);
+  }
+  @media (min-width: 768px) {
+    .sheet-title { font-size: 40px; }
+  }
+
+  /* 시트 본문 (스크롤 가능) */
+  .sheet-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px 32px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .sheet-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--dark-gray);
+    opacity: 0.6;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+  .sheet-meta .dot {
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+  }
+
+  /* highlight 문장 - pull quote 스타일 */
+  .sheet-highlight {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    padding: 0 0 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--ink-10);
+    position: relative;
+  }
+  .sheet-highlight::before {
+    content: '"';
+    display: inline-block;
+    font-size: 24px;
+    color: var(--orange);
+    margin-right: 4px;
+    line-height: 0;
+    vertical-align: -4px;
+  }
+
+  /* 전체 리뷰 본문 */
+  .sheet-fulltext {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--dark-gray);
+    white-space: pre-line;
+  }
+  .sheet-fulltext p {
+    margin-bottom: 12px;
+  }
+
+  /* body 스크롤 잠금 (시트 열렸을 때) */
+  body.sheet-open {
+    overflow: hidden;
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== 상단 룰 라인 ========== -->
+<div class="topline-wrap">
+  <div class="topline"></div>
+</div>
+
+<!-- ========== 헤더 ========== -->
+<header class="header">
+  <div class="header-label">INTRODUCING THE NEW REVIEW ARCHIVE · EST 2018</div>
+  <div class="header-logo">강</div>
+</header>
+
+<!-- ========== 거대 타이틀 ========== -->
+<div class="title-block">
+  <h1 class="main-title">후기<br>아카이브</h1>
+  <div class="title-meta mono">
+    <strong>REVIEW<br>ARCHIVE</strong>
+    COLLECTED SINCE<br>
+    2018 — 2025
+  </div>
+</div>
+
+<!-- ========== 오렌지 배너 ========== -->
+<div class="banner">
+  <div class="banner-inner mono">
+    85 REVIEWS <span class="sep">**</span> VERIFIED BY KBW CAFE <span class="sep">**</span> ZERO DAMAGE <span class="sep">/</span> ZERO HIDDEN FEE <span class="sep">/</span> ONE FIXED TEAM <span class="sep">**</span> EST. SEOUL
+  </div>
+</div>
+
+<!-- ========== 필터 ========== -->
+<div class="filter-bar">
+  <div class="type-chips" id="type-chips">
+    <button class="chip active" data-type="all">전체</button>
+    <button class="chip" data-type="일반포장">일반 포장</button>
+    <button class="chip" data-type="보관이사">보관이사</button>
+    <button class="chip" data-type="신혼">신혼 첫이사</button>
+    <button class="chip" data-type="부모님">부모님</button>
+    <button class="chip" data-type="원룸">원룸</button>
+    <button class="chip" data-type="장거리">장거리</button>
+    <button class="chip" data-type="재이용">재이용</button>
+  </div>
+</div>
+
+<!-- ========== 벤토 그리드 ========== -->
+<section class="bento-section">
+  <div class="bento" id="bento"></div>
+</section>
+
+<!-- ========== 하단 룰 라인 ========== -->
+<div class="bottomline"></div>
+<div class="footer-info mono">
+  <span>MOVING CARRY CO. — REVIEW PAGE / V02W04</span>
+  <span>VERIFIED BY 강봉원 CAFE</span>
+</div>
+
+<!-- ========== Bottom Sheet ========== -->
+<div class="sheet-overlay" id="sheet-overlay"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="sheet-handle" id="sheet-handle" aria-label="드래그로 닫기"></div>
+  <button class="sheet-close" id="sheet-close" aria-label="닫기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="6" y1="6" x2="18" y2="18"/>
+      <line x1="6" y1="18" x2="18" y2="6"/>
+    </svg>
+  </button>
+  <div class="sheet-header">
+    <div class="sheet-sub" id="sheet-sub"></div>
+    <div class="sheet-title" id="sheet-title"></div>
+  </div>
+  <div class="sheet-body" id="sheet-body">
+    <div class="sheet-meta" id="sheet-meta"></div>
+    <div class="sheet-highlight" id="sheet-highlight"></div>
+    <div class="sheet-fulltext" id="sheet-fulltext"></div>
+  </div>
+</aside>
+
+<script>
+// ============ 후기 데이터 ============
+// 각 리뷰마다 고유한 질문 키워드를 가짐 (question 필드)
+// concerns는 상위 MECE 카테고리 (필터링용)
+// question은 2줄 구조 (\n으로 구분) — 고객이 실제 묻는 표현
+const reviews = [
+  // ===== [가구 파손] 카테고리 =====
+  { id: 79, nickname: "물고기자리", date: "2025.03.26", type: "일반포장", genre: "비교형",
+    concerns: ["가구파손"],
+    question: "책장\n부서질까요?",
+    highlight: "이전에 저렴한 업체에서는 벽지도 찢고 쇼파로 가려놓고 가셨는데, 이번엔 책장 2개 박살 낸 업체와 비교도 안돼요." },
+  { id: 29, nickname: "쿼터백", date: "2019.08.19", type: "재이용", genre: "비교형",
+    concerns: ["가구파손"],
+    question: "가구 뒷면도\n신경 쓰나요?",
+    highlight: "견적 7군데 다 받아봤는데, 걸레를 직접 빨아오셔서 가구 뒷면까지 꼼꼼히 닦아주시더라고요." },
+  { id: 22, nickname: "초코바닐라", date: "2019.04.10", type: "원룸", genre: "일반",
+    concerns: ["가구파손"],
+    question: "원룸 짐도\n안전한가요?",
+    highlight: "예전 용달업체 파손 심했어서, 이번엔 검증된 곳으로. 친절하시고 물건도 손상 없고." },
+
+  // ===== [당일 추가금] 카테고리 =====
+  { id: 32, nickname: "poohlove86", date: "2020.01.30", type: "일반포장", genre: "찐감동",
+    concerns: ["당일추가금"],
+    question: "추가금\n안 붙나요?",
+    highlight: "결혼 10년 동안 6번 이사했습니다. 드디어 찐이 나타났습니다. 견적 이상으로 단 한 푼도 추가되지 않았어요." },
+  { id: 31, nickname: "milinai", date: "2019.09.26", type: "일반포장", genre: "디테일",
+    concerns: ["당일추가금"],
+    question: "짐 많아도\n가격 그대로?",
+    highlight: "'기록을 갱신했다'는 말씀도 하실 정도. 말씀하셨던 것처럼 추가 금액 없었습니다." },
+
+  // ===== [정확한 견적] 카테고리 =====
+  { id: 55, nickname: "제니퍼", date: "2023.11.23", type: "장거리", genre: "디테일",
+    concerns: ["정확한견적"],
+    question: "견적\n정확한가요?",
+    highlight: "3.5톤이라고 하고 당일 추가되는 경우도 있다는데, 사장님은 5톤 정확히 예측. 진짜 정확하시더라구요." },
+  { id: 54, nickname: "토니모리", date: "2023.11.18", type: "원룸", genre: "디테일",
+    concerns: ["정확한견적"],
+    question: "박스 몇 개\n나올까요?",
+    highlight: "박스 몇 개 나올지 여러 업체에 물어도 답 없었는데, 매의 눈으로 샤샤샥 보시더니 1톤 트럭이면 됩니다." },
+
+  // ===== [가전 연결] 카테고리 =====
+  { id: 85, nickname: "모리깅", date: "2025.11.12", type: "일반포장", genre: "디테일",
+    concerns: ["가전연결"],
+    question: "컴퓨터·커튼도\n설치해 주나요?",
+    highlight: "컴퓨터 연결도 해주시고 커튼도 설치해주시고 여러가지 팁들도 알려주셨어요." },
+  { id: 49, nickname: "퀴리백작부인", date: "2023.08.29", type: "부모님", genre: "디테일",
+    concerns: ["가전연결"],
+    question: "냉장고 모서리\n보호해 주나요?",
+    highlight: "아일랜드식탁 모서리에 냉장고 문이 부딪힐 것 같다고 뽁뽁이로 미리 모서리 보호시켜주셨어요." },
+
+  // ===== [불친절] 카테고리 =====
+  { id: 52, nickname: "걷다보면하늘이겠지", date: "2023.09.12", type: "일반포장", genre: "찐감동",
+    concerns: ["불친절"],
+    question: "기사님\n친절한가요?",
+    highlight: "보통 이사업체 무뚝뚝에 거친 행동들인데, 여기는 1분 만에 다르다는 걸 느꼈어요." },
+  { id: 62, nickname: "둘둘셋", date: "2024.04.15", type: "신혼", genre: "찐감동",
+    concerns: ["불친절"],
+    question: "팀 분위기\n어떤가요?",
+    highlight: "타업체는 인상 팍팍 쓰는데, 여긴 팀원 모두 화목하고 재미있게 일하시더라구요." },
+
+  // ===== [한국인 팀] 카테고리 =====
+  { id: 21, nickname: "코코아베이글", date: "2019.04.08", type: "신혼", genre: "디테일",
+    concerns: ["한국인팀"],
+    question: "한국인\n팀인가요?",
+    highlight: "어떤 팀이 오는지, 외국인이 포함되어 있는지 문의드렸고, 모두 한국인이라 바로 계약." },
+  { id: 23, nickname: "tjdrhdgkwk", date: "2019.04.13", type: "신혼", genre: "디테일",
+    concerns: ["한국인팀"],
+    question: "팀 호흡\n잘 맞나요?",
+    highlight: "팀장님, 기사님, 주방이모님, 직원분들. 각자 역할이 있으시고 호흡이 척척." },
+
+  // ===== [짐 정리] 카테고리 =====
+  { id: 77, nickname: "가온토리", date: "2025.02.17", type: "일반포장", genre: "디테일",
+    concerns: ["짐정리"],
+    question: "정리까지\n해주나요?",
+    highlight: "잘 안쓰는 건 안쪽으로, 자주 쓰는 건 손에 닿는 곳으로 알아서 착착 정리해주셔서 2번 정리할 필요 없었어요." },
+  { id: 84, nickname: "루시드쏘", date: "2025.10.22", type: "일반포장", genre: "찐감동",
+    concerns: ["짐정리"],
+    question: "주방 정리도\n해주나요?",
+    highlight: "이사하면서 주방 정리해주시는 이모님과 수다도 떨며 너무 기분 좋게 이사를 마쳤어요." },
+  { id: 46, nickname: "레몬트리봉봉", date: "2022.12.14", type: "일반포장", genre: "디테일",
+    concerns: ["짐정리"],
+    question: "같은 배치로\n옮겨 주나요?",
+    highlight: "같은 구조 이사라 복붙이사를 원했는데, 오전에 쓱 보시더니 바로 똑같이 넣어주셨어요." },
+
+  // ===== [돌발 상황] 카테고리 =====
+  { id: 33, nickname: "심쿵이맘", date: "2020.05.13", type: "일반포장", genre: "찐감동",
+    concerns: ["돌발상황"],
+    question: "언덕·좁은길\n가능한가요?",
+    highlight: "5톤 트럭 주차도 힘들고 사다리도 힘든 상황. 그 와중에도 붙잡고 설명해주셨어요." },
+  { id: 80, nickname: "정다남매맘", date: "2025.04.28", type: "일반포장", genre: "찐감동",
+    concerns: ["돌발상황"],
+    question: "비 오는 날\n괜찮나요?",
+    highlight: "제 물건들은 비가 온 줄도 모르겠더라고요. 잘 포장해서 옮겨주셨어요." }
+];
+
+// ============ 리뷰 원본 전문 ============
+// 시트 열렸을 때 보여질 각 리뷰의 전체 본문
+const fullTextMap = {
+  79: "이사한지 한달이 다 되어가니 정리도 좀 하고 이제서야 시간이 나서 후기를 씁니다^^\n예전부터 이사하게 되면 강봉원에서 후기 좋은 GS 이사몰에서 해야지 찜해 두었거든요\n저희가 사정상 2년전 7월에도 한번 이사를 했는데 그때는 이미 GS 이사몰은 예약이 꽉차서\n어쩔수 없이 부동산에서 소개해준 저렴한 업체에서 했는데 이사하고 가시고나니 벽지도 찢으시고는 쇼파로 가려 놓고 가셔서 나\n중에 발견해서 속 쓰린 경험이 있고 몇년전에 연예인이 광고하는 이사 업체에서도 해봤는데 책장 2개를 다 박살 내신 경험도 있고\n 해서\n이번 이사는 이삿짐 센터가 제일 바쁘다는 2월말에 이사를 하게 되었고 인테리어를 새로 한집이라\n기필코 GS이사몰에서 하겠다는 마음으로\n12월 초에약 이사 세달 전 전화를 드리고 다른데 비교 견적도 안받고 GS이사몰로 바로 계약 했네요\n그전에 이사 할때는 이삿짐 센터 직원분들이 다 연세가 있으신 분들이거나 외국인 분들도 오셔서 의사소통이 어려운 적도 있었는\n데 GS이사몰 사장님 뿐만 아니라 직원 분들도 다 젊은 분들 이셨고 이모님도 베테랑 이셔서 손도 빠르시고 저보다 살림에 대해 더\n잘 아셔서 제가 따로 손볼꺼 없이 착착 꼼꼼하게 정리 해 주셨어요 보통 이삿짐센터 가시고 나면 주방 살림 다시 제가 꺼내서 다시\n정리 했던 경험이 많았거든요ㅠㅠ\n이삿짐 센터는 팀 구성원도 정말 중요한거 같은데 이분들은 합도 정말 잘 맞으셔서 분위기도 이사내내 너무 좋았고 손들도 빠르시\n고 사장님은 정말 해결사 이신 듯 베란다에 수납장 때문에 머리가 아팠는데 고민이 무색하게 선반을 잘 설치해 주고 가시고 직원\n분들이 애들 장난감 수납장도 설치하시면서 서랍 다 꺼내서 먼지 다 닦아주시고  이런 이삿짐 센터 처음이라며 남편이 GS이사몰\n에서 이사 맡기길 잘 했다고 했답니다^^\n그간 이사 중에 젤 만족한 이삿짐 센터였고 왜 후기가 좋은지 저도 경험하게 됐네요\n다음에도 이사하게 된다면 그때도 고민 없이 GS이사몰에서 할 꺼에요",
+  29: "좀 긴글일수도 있겠지만. 이사업체로 고민이시라면. 저는 개인적으로 괜찮다고 말씀드리고 싶습니다.\n7월초에 이사업체 7군데(유명브랜드 및 개인업체) 견적보고,\n비수기에 일요일이라 가격대가 두자리 숫자까지 나왔습니다.\n어차피 강봉원지역으로 견적을 넣으면 그지점분들이 오시기에.\n4년전에 쌍문동으로이사시 유명브랜드 업체로 했다가 마무리개판으로 인해 유명브랜드에 대한 신뢰도가 떨어졌습니다.\n보통이사하면 서랍장이랑 장롱물건은 그위치대로 넣어주고 나머지는(주방.냉장고등) 일단 막 집어넣기는 다 동일하고\n냉장고청소.바닥청소. 스팀청소 등 좋은상품으로 서비스 해준다고해도\n저는 개인적으로 제가 다꺼내서 다시 정리하는 스타일이기에 이런부분에 대해서는 패스했습니다.\n호되게 당한기억을 말씀드리며, 견적오시는분들께 대놓고 말씀드리며. 견적서를 받았습니다.\n2년전 이사시에는 개인업체로 다른건 몰라도 마무리 확실한곳을 찾아서 만족도 있어\n올해 이사시 그분께 다시연락을했는데 이사해준팀원들이 그만둬. 견적을보다 가격도 저렴하길래 개인업체로 선정하기\n직전 카페에서 불만글을 읽어서 또 고민을 하다 혹시나 해서 gs이사몰에 견적을 넣었습니다.\n말씀하신대로. 젊은 사장님이시고. 똑부러지게 일하실거 같아서 막판에 바로 결정하였습니다.\n저는 비수기에 일요일이라 가격이 많이 다운됬지만. 보면 가격은 저렴하지도 비싸지도 않은거 같습니다.\n솔직히 당사자의 만족도는 다 복불복이겠지만. 저는 다음번에 이사시에 또 의뢰를 할생각입니다.\n사장님도 오셔서 직원분들과 같이 이사포장해주셨는데.\n저희 가족 및 일하시는분들과 함께 얘기도 많이 나누면서 웃으면서 작업한게 인상적이었습니다.\n또 저희가 살던집에 모기장을때거나 원상복구를 해야하는작업이 있어서 양해를 구하고 먼저 창문을떼달라고\n말씀을 드렸더니 직원분이 직접해주신다고 하셨고(2번작업해야하지 않나 걱정했는데 깔끔하게 처리)\n중간에 이것저것 궁금한거 많이 물어보고 일하시는데 방해를 드릴수있었음에도 불구하고\n짜증한번을 안내시고 설명해주셨습니다.\n또하나. 저희가 일하시는분들보다 어렸기에 어떻게보면 저희가 대신하겠다고 하면 다른팀들은\n저희한테 맡기도 다른일 하러 가실텐데. 여기 팀원들은 다 먼저 놔두세요. 저희가 해드릴게요.\n본인들 일로 생각하시고 떠넘기지 않더라구요.\n이사후에도 정신없고 바쁜상황에서도 요구사항 다 들어주시고.\n티비.컴퓨터등 파손나면 업체에서 보상을 해주는게 당연하지만. 사장님이 직접 꼼꼼하게 포장하시면서\n고장나면 제가 책임집니다. 웃으면서 말씀도 해주시고.\n직원분들이 본인집처럼 이사하신거마냥 해준시다는 느낌을 받았습니다.\n저희도 2년마다 연속으로 이사를 자주했는데 보이는곳은 슬쩍 장갑으로 닦거나 뒤는 아예 신경도 안쓰시는분들이\n대부분이신데 .직원분께서 걸레를 직접빨아오셔서 뒷면까지 꼼꼼하게 닦아주시는거보고.\n이런 작은거 하나에 신경써서 이사정리를 해주신게 저는 만족도가 높았습니다.\n견적을 많이 봤지만, 10만원정도 차이인거같아요. 더주냐 안주냐.\n너무싸도 의심. 비싸면 부담. 중간가격대로보게되고\n더구나 카페협력업체이시다보니 대충대충하시지는 않겠다 싶어 결정한건데. 저는 후회가 없었습니다.\n덤으로 에어컨설치 협력업체 기사님도 괜찮으세요!!!\n저희도 이분야로 많은걸 또 배웠던 하루였습니다.\n어제 이사하시느냐 고생많으셨습니다.\n또 좋은업체를 소개받을수 있게해주신 카페에 감사합니다",
+  22: "안녕하세요\n3월말에 원룸에서 이사했었는데 그동안 이래저래 바빠서 이제서야 후기를 씁니다\n견적봐주신 젊은 분도 친절하시고\n이사당일 짐 옮겨주신 2분도 친절하셔서 좋았어요\n예전에 원룸으로 이사갈 때 어떤 용달업체 썼었는데 불친절하고 물건 파손도 심했어서\n이번엔 검증된 곳으로 하려고 알아봤었거든요\n카페 협력업체이기도 하고 후기도 괜찮은 것 같아서 이번에 이용해봤는데 매우 만족했어요\n친절하시고 물건도 손상없구요\n고마워서 가실 때 드리려고\n냉장고에 넣어둔 음료수도 정신없어서 못드렸네요",
+  32: "찐이 아니면 안남기는 후기인데......\n정말 이런 업체들이 진심!!잘됐으면 하는 마음에 자발적인 후기 남겨봅니다~~!!!\n일단 저는 이사를 결혼 10년동안 6번을 했습니다\n추천 받아서도 해보고 꼼꼼한 후기검증을 통해서도 해보고\n싸다고 하는곳에서 험상궂게 생긴 외국인들과도 해보고\n눈 딱감고 대박 비싼곳에서도 해봤습니다\n드디어 찐이 나타났습니다!!!!!\n제가 원하던 딱 그업체입니다\n먼저 가격은 비싸지도 아주 저렴하지도 않습니다\n가격은 비싸다고 좋은것도아니고 저렴하면 딱 그정도 밖에 안해줍니다 그런 걸 미리 경험했기 때문에 전 다른곳 알아보\n지도 않고 단지!!친한친구가 강력추천을해서 이것저것 물어보고 바로 결정했습니다\n진심 그친구한테 너무고맙습니다ㅜㅜ\n일단 이사 견적을 보러오시는분이 직접 이사를해주셔서\n너무좋았습니다 미리 스케일을 딱 보고가시니 더이상의 추가금액도 요구하지 않습니다\n전 다른곳에서 싸게 해주는척 하면서 당일날 1톤추가로 금액을 더 요구해 기분이 상한적이 있어서\n이번에는 마음 편히 맡겼습니다\n두번째 !! 순간 훈훈한 남자분들이 들어오셔서 과연 힘을 쓰실수있을까 걱정이됐는데 ......힘이 장사이십니다!!!!\n너무 친절하시고 꼼꼼하시고 이것저것 편하게 부탁드릴수 있는 분위기여서 좋았습니다 타업체에서는 험상궂게 생기신\n분들이 오셔서 뭐 부탁만하면 인상팍팍 쓰시길래 일찍 집에 보내드렸던 적도 있습니다\n심지어 저희집은 난이도'상'의 집이였음에도 불구하고 얼굴 한번 찌푸리지않고 최선을 다해주시는게 보여 너무감사했습\n니다 ~~~\n집에 책이 어마어마하게 많고 조립식 헹거에다가 세탁실 터닝도어로 세탁기와 건조기가 나올수 없어서 방에 작은 창문\n으로 들어 넘겨야하는 고난도의 집이였습니다\n참 손이 많이가는 집이였죠 8시시작해서 5시가 다돼서 끝났습니다 ㅜㅜ\n여태까지 이사중 가장 오랜시간 머무셨습니다\n제가 가만히 있을 수없어 손을 보탰는데도 커텐위치 거울의 위치 콘센트나오는 위치 하나하나 꼼꼼히 저한테 물어주시\n고 다시 손댈 필요도 없게끔 해주고 가셨습니다\n지금까지의 다른 업체들은 거의 3시쯤 대충 쑤셔넣고 떠나셨더랬죠..!!\n다른곳과 비교했을때 단점을 찾으라면 그걸 찾아내는게 더힘드네요 ㅋㅋ\n오늘이 이사 다음날인데 옷가지들까지도 야무지게 걸어주고 가셔서 편히 앉아 후기남길 수 있었네요\n2년뒤에 또 이사갈꺼같은데 앞으로 이사는 gs이사몰 아니면 쳐다도 안볼랍니당 !! 병만씨와 영구씨에게는 죄송하지만\n찐입니다 찐!!!!",
+  31: "8월 초에 이사하고 한달 여 지났지만 후기 꼭 남기고 싶어서 몇자 적어봅니다.\n3군데 정도 견적 받아봤고요. 가격은 모두 달랐는데 크게는 50만 가까이 차이가 났어요. 세군데 견적 중 gs이사몰이 중\n간 가격대였습니다. 일단 카페 후기글 및 댓글까지 꼼꼼하게 다 찾아봤어요. 현장 견적 받을때 팀장님이 직접 와서 체크\n해주시고 이사 당일도 팀장님이 직접 오셔서 작업해주신다는 부분이 제일 신뢰감이 들어서 결정했습니다.\n우선 저희집 책이 어마어마했습니다. 이사 끝나고도 팀장님이 기록을 갱신했다는 말씀도 해주실정도로요. 계속나오는\n책정리 무겁고 힘드셨을텐데...끝까지 친절하게 작업해주셨습니다. 시간도 오래걸렸고 짐도 많았지만 처음 계약 당시 말\n씀하셨던것처럼 추가 금액 없었습니다.중간에 한분 더 오시기도했고 생각보다 힘든 작업이 많았기때문에 아\n주 아주 부끄러울 정도로 조금 성의표시...자발적으로 했습니다.\n가구배치나 짐도 하나하나 다 물어서 결정해주시고 그 더운날 힘드셨을텐데 정성스럽게 작업해주셔서 감동이었습니다.\n다른분들께도 무조건 추천드리고 싶습니다.\n무엇보다 친절하신 팀장님이 상담부터 마무리까지 함께해주시는 점이 가장 좋았습니다.\n이사로 고민하고 계신 분들 계시면 꼭 상담 받아보셔요.^^",
+  55: "이번 주 화요일에 창동에서 수원으로 이사하며 gs이사몰을 이용하여 후기 적습니다\n우선 gs이사몰을 이용하고 느낀 점은 정말 책임감이 넘친다라는 것이었습니다\n저희가 가전도 다 안가져가고 안방에 있는 침대와 장농 서랍장만 가져가서 큰짐들이 별로 없으니\n큰 트럭이 필요하다고 생각하지 않았어요\n처음 견적받은 곳도 35톤이면 된다셨고 25톤3톤을 말씀하신 곳도 있었거든요\n그러다가 gs사장님과 견적을 보는데 5톤으로 해야한다고 하시더라구요\n큰 짐들 다 놓고 갈건데 그렇게 필요하냐고 여쭤보니 잔짐들 싸다보면 그렇게 나올거라고 하시면서\n35톤이라고 하고 그날 가서 짐이 많으니 더 추가되는 경우도 있다고 하셔서 고민이 되더라구요\n견적은 적게 봐놓고 추가 되면 어쩔 수 없이 비용을 지불해야하는데\n그것보다는 넉넉하게 하는게 좋다고 생각하며 고민중인 와중에 또 다른 업체도 5톤 견적을 봐주셔서\n두 곳중에 정하기로 했죠\n비용은 다른 곳이 좀 더 저렴하긴 했는데 강봉원에서 좋은 글도 많이 봤고 사장님께서 책임지고 해주시겠다는 말을 믿고 바로 선택했습니다\n회원님들이 쓰신 후기를 읽으면서 저 혼자만의 믿음을 키워가서 더 선택이 쉬웠던 것 같아요ㅎㅎ\n아무래도 멀리 가는 거라 그날 일찍부터 짐을 싸니 10시쯤 되니 다 끝나더라구요\n이사 가기 전 날까지 당근거래도 엄청 하고 옷이나 신발도 엄청 버려서 저와 남편은 이거 3톤이면 충분하지 않나싶었는데 왠걸 짐을 다 싸고 나니 5톤 트럭이 가득 들어갔어요ㅋㅋㅋ\n사장님이 진짜 정확하시더라구요 정말 놀라웠습니다\n짐을 척척 알아서 잘 싸주신 덕분에 부동산 일도 편하게 보고 빨리 끝나서 저희도 빨리 움직일 수 있었어요\n그러고 수원을 갔는데 저희가 들어갈 집은 그때까지도 짐을 싸고 있더라구요\n여기 집을 정리할 때 보니 꼭꼬핀 안 뽑은 것도 있고 안 가져간것도 있어서\ngs가 진짜 빠르고 꼼꼼한거구나 생각했어요\n저희가 도배를 같은 날 하게 되어 대기를 해야하는 상황이 생길 것 같아 미리 말씀드리니까\n최대한 대기하면서 생길 수 있는 추가금 최소로 하면서 진행해보겠다고 하셔서 넘 감사했답니다\n그날은 도배를 다 하는게 아니고 방 두개만 하는거라 다행히 거실과 부엌은 먼저 들어올 수 있어서 바로 진행이 되었어요\n이삿짐 정리해주시며 제가 놀란건 책장정리였어요\n제가 집에서 아이들을 가르쳤어서 교사용교재가 많았고 그게 제 방식대로 정리되어 있었거든요\n레벨별이랑 영역별로 정리해 놨었는데 이사하면 당연히 섞일 줄 았았는데 그게 그대로 꽂혀있는거에요\n제가 정리하는걸 잠깐 봤는데 그냥 박스에서 뽑아서 쑥쑥 집어 넣으시던데 어떻게 그걸 아셨지아직도 놀라워요ㅎㅎ\n그리고 조카가 부엌벽에 붙여 놓은 강아지 종이가 있었는데 그것도 가져오셔서 똑같이 부엌벽에 붙여놓으시더라구요ㅋㅋㅋ\n그런 디테일에 놀랐어요\n여사님이 손이 엄청 빠르고 야무지셔서 그릇정리를 쓰기 편하게 정리해주시고 세탁실도 깔끔하게 정리해 주셨어요\n아무래도 이사하는 날에는 신경도 많이 쓰게 되고 신경이 예민해지기 마련인데\n믿을 수 있도록 책임감있게 해주시는 모습에 안심이 되었습니다\n여사님과 몇마디 이야기도 나눴는데 마음도 잘 알아주시고 편하게 말씀해주셔서 넘 좋고 감사했습니다\n보통 사장님은 책임감있게 해주시지만 팀원들은 그렇지 않은 경우도 있는데 여기팀은 모두 책임감있게 해주시는게 느껴지더라구\n요\n창동으로 이사왔을 때는 잔짐들이 많다보니 한쪽에 몰아넣으면서 이건 나중에 정리하라고 말씀해주시고 가셨거든요\n물론 그분들도 열심히 해주셨습니다ㅎㅎ\ngs에서는 아직 도배가 다 안끝났으니 저희가 그냥 짐들 한쪽에 몰아놓아달라고 말씀드리니까\n그럼 정리하는거 힘드실텐데 하시면서 정리하기 쉽게 분류도 해주시며 계속 걱정해주시더라구요\n거실책상에 있던건 여기두겠다 이렇게 계속 찾기 쉽도록 말씀해주시고 놔주셨어요\n그런 디테일이 진짜 감동이었습니다\n도배랑 같이 하다보니 예정시간보다 늦어졌는데도 끝까지 열심히 해주셔서 진짜 진짜 감사했어요\n어제까지 도배하고 이제야 한숨돌리게 되어 이렇게 후기 적습니다\n워낙 꼼꼼하게 해주셔서 그런지 뭔가가 안보일 때 혹시 이사하다가 사라진거 아냐라는 의심이 올라오기보다\n분명 어딘가에 있을거야 라고 생각하게 되더라구요ㅎㅎ\n그렇게 믿음을 주신 덕분에 넘 감사히 이사 잘 했습니다\n이삿짐센터 고르는게 가장 먼저 할 일이었고 큰 일이었는데 책임감있게 믿을만하게 신속하게 해주셔서\n안심하고 할 수 있었고 잘 선택했어요 내년에 이사하는 친구에게도 추천해주려구요\n강봉원회원님들을 믿기를 잘했습니다^^\n이사로 고민하시는 분들께 조금이라도 도움이 되길 바라며 gs이사몰 더욱 번창하길 바랄게요♡",
+  54: "글쓰는 재주가 없어서 글은 잘 못쓰지만\n후기는 꼭 써드리고 싶어서 올려봅니다\n이사가 처음이라 여기 저기 전화로 견적도 받아보고\n인터넷 견적도 받아봤지만\n저희집에 박스가 몇개가 나올껀지 저에게 물어보시는데\n도저히 감이 안잡혀서\n전화 끊기만 여러번에 지쳐갈때쯔음\n강봉원에 지푸라기 라도 잡는 심정으로\n검색해보니 GS후기가 엄청 나더라구요😲\n반신반의 하며 문자한통 드려봤는데\n바로 방문견적 날짜 잡아주셔서\n퇴근시간땜에 늦은시간 부탁드렸는데도\n흔쾌히 와주셔서 매의 눈으로 샤샤샥 훑어보시더니\n1톤 트럭이면 되겠습니다 라는\n사이다보다 더 시원한 대답을 들려주셔서\n여기다 싶었어요\n이삿날 까지도 잔금시간이 왔다갔다 하는바람에\n걱정이 이만저만이 아니었는데\n일찍 와주셔서 척척척척 짐 싸주시고\n별안간 주민센터 전산 업무가 마비되는 바람에\n부동산에 발이 묶여서\n이사갈 집에 가서 여기 저기 요렇게 놔달라\n부탁도 못드리는 상황이 와서\n걱정이 이만저만이 아니었는데\n주민센터 부동산 왔다갔다너덜너덜해져서\n이사간 집에 들어갔는데\n옷방에 블라인드도 설치해주시고\n침대 프레임은 배송만 미리 받아둔거라\n차마 설치 이야기는 꺼내지도 못했었는데\n센스있게 튼튼하게 설치해주고가셔서\n침대에서 잘수 있었습니다 🥹\n너무 너무 감사드리구요\n건강하시구 행복하세요 �\n\n힘내라육아\n저도 gs이사하고 매우만족했어요\n후기글은 안썼지만.. 담에 이사하면 또 여기서 할꺼같아요. 저는 방문경적 2번밖에 안받긴했는데 gs이사가 견\n적도 비슷했오요. 옛날후기에는 비싸다는글도 꽤있었거든요. 꾸준히 계속 좋은후기만 있었으면 좋겠어요♡♡\n강봉원에서 좋다고 소문타서 결국 안좋은 경험담이 폭폭 터지는경유도 봐서..ㅠㅠ",
+  85: "10월 15일 이사였는데 이것저것 정리할게 많다보니 정신이 없어 이제야 후기 글을 쓰게 되었네요ㅎㅎ\n지금까지 적지 않은 이사를 다녔었는데, 늘 이사 업체들에 만족하지 못했고 특히나 가장 직전에 했던 이사에서 최악의 이사 업체를\n만나ㅠㅠ 인생 최악의 이사를 경험했습니다..\n그래서 이번 이사때는 제발 좋은 업체분들과 만나고 싶다는 마음으로 서치하던 중 강봉원 협력업체인 gs이사몰을 보게 되었습니\n다.\n강봉원 회원분들의 많은 후기를 볼 수 있다는 점, 그리고 견적요청때 방문하셔서 자신감 있게 말씀하시던 모습과 견적보는 중에도\n예약 문의 전화가 오는 모습들을 보며 한번 믿어보자! 라는 마음에 당일에 바로 확정 연락드렸네요..ㅎㅎ\n이사 당일에는 약속 시간보다 먼저 와주셔서 짐을 빼주셨는데 다들 손이 어찌나 빠르신지 저희 집이 짐이 정말 많은 편이었는데도\n불구하고 예상보다도 빠르게 짐이 빠질 수 있었어요.\n버리고 가는 가구들도 많아서 고생하셨을텐데 불만스러운 표정도 없이 일해주셔서 정말 감사했습니다!\n구축아파트에서 신축아파트로의 이사라 확연히 다른 집 구조때문에 기존의 짐들을 새롭게 배치했어야 했는데, 마음대로 두시지 않\n고 하나하나 다 물어봐주신 뒤 배치 해주셨고 종종 어떤 배치가 더 나을것 같다며 의견을 주시기도 하셔서 새로운 구조에도 덜 당황\n하고 수월하게 정리 할 수 있었던 것 같습니다.\n특히나 일해주시는 인력분들이 모두 웃으며 이사내내 기운좋게 일해주셔서 힘든 이사에도 처음으로 끝까지 웃으며 마무리할 수 있\n었고, 가구 조립도 빠르게 잘 해주셨습니다!\n주방 이모님도 정말 실력자에 손도 빠르고 친절하셔서 저희 어머니도 너무 마음에 들어하시고 감사하다고 하셨어요ㅎㅎ 다음번 이\n사에도 꼭 함께 할 수 있었으면 좋겠습니다!\n참 이삿짐 들어갈때 쯤에는 현장 매니점님도 와주셔서 저희가 어려워했던 컴퓨터 연결도 해주시고 커튼도 설치해주시고 여러가지\n팁들도 알려주셔서 정말 감사했습니다! 정말 처음으로 웃으며 끝날 수 있는 이사라 신기하고 감사했어요ㅜㅜ 다음에 이사가게 될\n때에도 꼭 이사짐캐리와 함께 하고 싶어졌습니다!",
+  49: "친정 부모님이 21년만에 이사를 하셔야 해서\n카페에서 이사관련 글들 검색해 보고\n강봉원 제휴업체인 GS이사몰에 문의했어요\n오래 기간 동안 쌓아온 묵은 짐들이 너무 나도 많아서\n 부모님 집에 있는 짐들이 10톤이나 되었다는ㅋㅋ\n정리를 하고 견적을 받을까 하다 그러다 예약 못 할 것\n같아서 버릴짐들 목록 싹 다 말해서 견적 받았죠\n사장님께서 짐 버릴 것들 꼭 다 버려주셔야 한다고\n정리하실거 감안해서 견적 내드린거다\n약속 지켜주셔야 한다고 하셔서 걱정마시라 하고\n다른데 견적 볼 것도 없이 바로 계약했어요\n일단 많은 분들의 좋은 후기들을 봤었고\n그리고 젊으신 사장님께서 신뢰감 있게 얘기해주신 것도\n좋았고 한 팀만 운영하신다는 것도 외국인 없는 한국인만\n계신다는 것도 좋아서 바로 계약했어요\n4년전에 저희 집 이사할 때 정말 인생 최악의 이사업체를 만나서\n개고생을 했던지라 부모님 이사할 땐 이사 일 잘해주시는 업체를 꼬옥 만나길 바랐었지요\n계약 후 다음 날 부터 저는 사장님과 약속을 지키기 위해\n친정집을 한달 반 동안 매일 같이 출퇴근하며 부모님 집에 있는 묵은 짐들을 싹 다 버릴건 버리고 정리하기 시작했어요\n다들 아시죠어르신들 짐 못 버리시니 제가 나설 수 밖에요\n진짜뭘 그렇게 많은 짐들을 버리지도 않고 쌓아두셨는지\n정리할 때도 몇 년 동안 쓰지도 않은건데 안버린다고 하셔서\n실랑이 벌이고저정말 정리하는데 힘들었어요ㅠㅠㅠ\n특수마대 폐기물 봉투를 몇개나 샀는지\n폐기물 스티커도 엄청 나게 붙여서 무거운거 다 내놓고 버리고\n옷들도 기부할 수 있는거 다 기부하고진짜 온 몸이 삭신이 다 쑤시고 난리도 아니었다는ㅠㅠㅠ\n버릴거 싹 버리고 이삿날 정리 하기 편하게 미리 수납함에 담아둘 수 있는 거 담아놓고\n드디어 기다리던 이삿날\n사장님께서 부모님 집에 들어서시면서\n진짜로 이렇게 약속 지켜서 버릴 짐 다 정리해주시는 분\n거의 없었다고ㅋㅋ 진짜 정리 많이 해주셨다고ㅋㅋ\n 저 진짜 진짜 힘들게 부모님 짐 정리했어요ㅜㅜ\n암튼 이삿날 일하시는 분들이 알아서 척척척\n역할 분담이 아주 잘 나눠져있어서 팀원들끼리 합이\n잘 맞아보였어요 분위기도 너무 좋았고요\n주방쪽에서 일하시는 이모님은 손이 엄청 빠르시더라고요\n짐 정리하는거 빼는데 까지 2시간도 안 걸린 것 같아요\n부모님은 포장이사라는걸 처음 해보는지라 계속 신기해하시며\n보고 계셨다는요ㅎㅎ\n이사 짐 빼고 보니 5톤차에도 꽉 안차게 짐을 줄였더라고요\n짐 줄인 내 자신이 괜히 뿌듯ㅎㅎ\n예상했던 시간보다 빨리 짐 빼고\n이사갈 집으로 이동해서 식사 후 짐 옮기려는데\n이사갈 집에 좀 문제들이 많아서 잔금 치루는 시간도\n딜레이 되고 그러느라 대충 큰 가구 위치들만 말씀드려놓고\n계속 부동산에 있느라 보지도 못했어요\n힘들게 부동산에서 일 처리 끝내고 와보니\ngs이사몰 이사업체 분들께서 알아서 적절한 위치에\n척척척 짐 정리를 거의 다 끝내고 계셨다는\n완전 빠름빠름 호흡 척척\n책상 책장 위치도 최적의 위치를 찾아서 배치해주시고\n세탁기 연결도 해주시고 세탁기 미리 작동시켜보시고는\n온수 수도꼭지에서 물이 좀 샌다고 얘기해주시며\n조여주시기까지섬세함에 완전 감동\n게다가 아일랜드식탁을 새로 사서 놨는데\n냉장고 문 열 때 식탁 모서리에 부딪힐 거 같다고\n뽁뽁이로 미리 모서리 보호시켜주시고 나중에\n다이소에서 모서리 보호대 사서 붙이시라고\n와또 다시 감동\n짐들 뭐 손상가거나 분실되는 것도 없었고\n창고에 넣어야 할 짐들도 알아서 척척척 다 정리해주시고\n혹시 위치 맘에 안드는거 있으면 얘기해달라고 하시고\n이사후 마무리 청소도 깨끗이 해주시고\n주방 식기류부터 냉장고도 다 두 번 손 가지 않게\n완전 알아서 다 해주셨어요\n이사한 곳에서도 2시간도 안돼서 짐 정리 끝났어요ㅎㅎ\n진짜부모님께서도 일 너무 잘하신다고\n너무 마음에 드셨다고 좋아하셨어요\n저도 너무 너무 만족해서 다음에 우리집 이사할 때도\n꼭 gs이사몰에서 해야겠다고 생각했어요\n너무 만족해서 이삿날 저녁 때 식당가서 밥 먹었는데\n이사업체 너무 좋았다는 얘기를 신나게 나누니\n서빙하시던 식당 직원분이 어디 이사업체 인지\n알려달라고 하셔서 gs이사몰 번호 알려드렸어요ㅋㅋㅋ\n이사후기 쓰다보니 길어졌네요ㅋㅋㅋ\n그만큼 너무 만족해서 할 말이 많아졌던 거 같아요ㅋㅋ\n물론 사람마다 만족도의 정도는 다 다르겠지만\n저랑 저희 부모님은 완전 만족했답니다",
+  52: "정리 적응이 안되서 한달이나 지나고 후기를 쓰네요 ^^\n이사를 앞두고 이사업체는 제가 애정하는 카페 강봉원의 픽인 gs이사로 다른 곳 생각하지 않고 굳혀져 있었죠 비용을 모르는 상황\n에서 말이에요\n연락 드리고 사장님께서 오셔서 견적내고 상담받고 그냥 굳어진 심지대로 진행 하였죠\n 짠돌이 남편은 완전 저렴이 이사비용이 아니기에 쫌 떱떠름이 아예 없진 않았지만 제가 계속 전부터 괜찮대 괜찮대 했던터라 진행하라 했어요\n두둥 이사날\n태풍 소식에ㅠㅠ 사장님 전날 전화오셔서 조금 일찍 빼고 일찍 들어가 보자고 해서 오케이 하고\n정말 일찍 오셨어요 비는 내리기 시작했고\n근데 이거 뭔가요 오신 분들이 너무 다 친절하심 뵌지 1분만에  느꼈어요\n보통 이사업체 별로였거든요 무뚝뚝에 거친 행동들\n와 그런데 달라요 그게 1분만에 느껴져서 안심되고 다행이다 생각해서 인지 눈물날뻔요 ㅎㅎㅎ\n그리고 속도가 진짜 빨라요 척척척 사장님께서 상담시 말씀하셨던 그 척척척\n그게 속도 뿐만이 아니라 일의 진행흐름이나 일을 잘해야만 나오는 그 느낌 척척척 아시죠역시\n집에 작은 어항이 하나 있었는데 어쩌죠물으니\n이모님께서 오실때 소중히 품에 안고 오셨 이것 때문에 아들이 이모 최고라고 했답니다ㅋㅋㅋㅋ\n물고기 멀미난다고 농담까지 해 주시던 항상 마음 편하게 해 주시던 그 분도 계속 생각나네요 ㅎㅎ\n이사하는 집에 도착하고 여기도 각자 위치에서 척척척 해주시는데\n사장님이 안 보이시네방에 들어가셨는데 왜 이렇게 오래 조용하시지해서 들어가 봤더니\n이불 낱장 하나하나 베개커버 한 장 한 장 세심히 아기다루듯 개서 넣고 계셨\n오모나 전 여기서 그냥 끝을 봐 버렸죠 아\n지금도 눈물 날 것 같죠 왜ㅜㅜ 감사합니다\n그냥 사장님 집 정리하시는 줄 알았어요ㅎㅎㅎ\n정리 안 된 놀이방 짐들도 나중에 정리 하기 쉽게 딱 딱 놔 주시고 ㅜㅜ\n하아 그냥 정말 감사드린 이사업체였어요\n이사업체가 사실 좀 복불복이라 불안한 마음에 다들 선택하실 텐데\n그냥 여기요 전 여기요 ㅎㅎㅎㅎ\n사장님 계속 하셔야 되요 다음 이사때도 부탁드릴거니까요 ㅎㅎㅎ\n오셨던 모든 분 들 건강하시고 몸 다치지 마세요 감사했습니다^^\n비용에 떱떠름 했던 남편은 모든 이사가 끝난 뒤 저에게 한 마디 했어요 이사업체 하나는 진짜 잘 한 거 같다고",
+  62: "오늘 이사했어요 오늘 이사로 녹초인데 글 작성중인거면 얼마나 화나는지 아시겠죠너무 화나요\n처음엔 다른 이사 업체들보다 가격이 있는편이라\n살짝 고민했지만  돈 더 내야할거같아요\n그래서 화나요 기술에 비해 너무싸\n신혼가전이라서 워시타워 시스템행거 등등\n다른 이사업체에서 할수있지만엘지에 맞기시는게 편해요 라는 애매한 답변만 들었어요\nLG에 맡기면 최소100만원 추가였어요ㅠㅠ\n전 항상 비싼게 좋은거다 라는 마인드라서\n강봉원제휴 GS이사몰에서 진행 하게되었어요\n자신있게 다 할수있습니다 라고 말해준곳은\nGS이사몰 한곳입니다\n친한지인도이사업체운영중\n일단 견적 봐주실때 인상 너무좋으셨고\n오늘 이사할때도 꼼꼼히 직원한분한분 비오니깐 잘싸달라고 말씀 해주시더라구요\n이사가는집 계약6번 파토 났지만 괜찮다고 말해주시는 사장님♥\n제일 좋은건 이사업체중 팀 분들 모두 제일 화목하고 재미있게 일 하시는거 같았어요 ㅎㅎ\n너무 완벽해 진짜\n내인생 최고의 이사업체입니다\n난 백만원 더 비싸도 다음에도 요기서 꼭 할꺼에요\n안좋은 후기가 몇개 올라왔길래 보았는데  제가 오늘 직접 내돈내산 해보니 말도안되는 후기인거 같아서타업체인가\n라는 생각도 드네요 직접 내돈내산 해보시면 말도안되는 글이다 라고 생각 드실꺼에요🥲 사장님 진짜 꼼꼼하시고 열심히 하십니\n다  아니 무엇보다 잘해요\n고민할시간에 예약하세요 예약도 힘들어요\n아 진짜 계속 칭찬만 하는데 어쩔수없어요\n선택장애인 저에게 풍수지리로 가구배치\n착착 정해주는 사장님에게 잠깐 반했어요🤣\n오늘 하루 너무 고생많으셨고 덕분에 행복한 이사가 되었어요 기분좋은 기억 너무 감사드립니다 �",
+  21: "결혼 후 3년만에 첫번째 이사를 하게 됐어요.\n결론 먼저 말씀드리면 만족스러운 이사였습니다.\n5월에 시부모님도 이사하시는데 견적받아보시라고 말씀드렸어요.\n포장이사업체 수많은 후기들을 보면서 어디에 이사를 맡겨야 하는지 고민이 많이 됐습니다.\n여러 후기를 보며 내린 결론은 결국 팀을 잘 만나야 하는거더라구요.\n처음에는 카페를 생각도 못하고 있다가 번뜩 생각이 나서 제휴 업체인 gs이사몰에 견적을 요청했습니다.\n견적 받으며 어떤 팀이 오는지, 외국인이 포함되어 있는지 문의드렸고,\n모두 한국인에 실장님이 직접 와주신다는 말에 바로 계약했어요.\n저에겐 팀이 보장되어 있는게 중요했거든요.\n이사 당일 오전 7시30분에서8시 사이에 오신다고 해서\n8시에 와달라고 말씀드렸고 정확히 8시에 와서 시작하셨어요.\n주방은 이모님이 담당하시고, 안방은 조금 연세있으신 분이, 나머지는 젊은 남자분들이 담당해서 빠르게 진행하셨어요. 분해장이 있어\n서 걱정했던 부분이 있었는데 흠없이 분해 안한 것처럼 다시 잘 만들어 주셨어요. 나중에 알고보니 분해장 경력이 오래 되셨다고 하더\n라구요~\n냉장고 넣는 곳이 마루 위에 깔려있는 장판 때문에 설치가 어려웠는데\n장판 떼어내고 말끔히 청소해 주신 뒤 설치해 주셨구요(덕분에 훨씬 깨끗해 졌어요!)\n아일랜드 식탁 위치가 애매했는데 이모님이 잘 조언해 주셔서\n자리도 잘 잡았어요~팔아야 하나 했거든요\n잔짐들도 원래있던 자리에 잘 정리해주셨고, 자잘한 화분들이 몇개 있었는데 잘 옮겨주셨어요.\n덕분에 이사 잘 했습니다.",
+  23: "4/11에 GS 이사몰을 통해 이사했습니다.\n짐은 별로 없었지만 신혼가구 이사라 걱정돼서 견적을 여러군데 받아봤는데...\n업체에 따라 장단점이 있는 만큼 가격도 조금씩 차이가 있더라구요~\n프렌차이즈 브랜드도 받아보고, 부동산 소개 지역업체도 받아봤는데 결정을 못하고...\n카페를 통해 GS 이사몰을 알게 됐습니다.\n광고나 홍보글보다 실제로 이사한 분들의 후기가 중요할 거 같아 검색을 많이 해봤는데\n대체로 후기가 좋아서 견적 의뢰를 했고... 팀장님이 직접 오셔서 견적을 봐주셨어요.\n가격은 가장 저렴한 다른 업체들보다는 아주조금 비쌌지만,\n금액보다는 전문성과 신뢰, 성실성이 중요한 것 같았어요.\n이사 당일에도 팀장님이 직접 나오시고, 팀원도 일용직 분들을 순환하는게 아닌\n고정적으로 한팀만 구성돼 있다는 점이 맘에 들어서 계약을 했어요.\n(그러고도 저는 사실 걱정이 많은 편이라..ㅎㅎ;; 이사전날까지도 맘을 놓지 못했다는...;;)\n드디어 이삿날!!!\n아침 8시되기 전에 오셔서 이사가 척척 진행되기 시작했어요.\n계약때보다 더 신경써주시려 인원도 한분 더 추가로 와주셨다고 했고,\n각자 자신의 역할이 있으신지 호흡이 척척!\n알아서 다 해주시더라구요~\n전체적인 현장 지휘와 모든 책임을 맡으신 팀장님,\n가구 전문가인 것 같으신 연륜의 내공이 느껴지는 기사님,\n꼼꼼하고 상냥하신 정리의 달인 주방이모님,\n젋고 건장한 체력에 인테리어 이사 베테랑 포스가 느껴지는 성실한 직원분들...\n모두 전문적인 스킬로 포장이 일사천리로 진행되었습니다.\n저랑 남편은 오히려 방해가 될 것 같아 집 밖에 나와 있었습니다.\n이사나오는 집이 다세대빌라라 길쪽이 좁고 전선들이 어지럽혀 있어서 쉽지 않은 이사였는데\n단 한 번도 힘든 기색 없이 순조롭게 착착!\n11시 전에 이삿짐 다 내리고 새로운 집으로 이동!\n점심 식사 후 이삿짐을 올려주셨습니다.\n큰소리 하나 없이, 다들 조용히 맡은 일 해주시면서 유쾌하시고 겸손하시고...ㅎㅎ\n가구 배치도를 미리 그려서 드렸는데 숙지를 다 하셨는지 알아서 다 맞게 배치해주시고\n가구 조립이랑 옷 정리, 책 정리도 흐트러짐 없이 그대로 해주셨어요.\n정말 저희는 별로 할게 없어서 짐 정리하시는 동안 나가서 아이스커피 테이크아웃해서 사다드렸어요^^\n파손이나 분실 하나 없이 깔끔하게 정리해 주시고, 이사도 생각보다 빨리 끝났어요.\n결과는 대만족!!!\n너무 감사해서 제가 자발적으로 꼼꼼한 후기로 보답하겠다고..ㅎㅎ\n저희 어머님네도 이달 말에 이사하는데, GS이사몰에서 합니다!\n사실 저희 집 계약 후 어머님네도 계약한 거라서 잘못 하면 난감한 상황이 될까 우려했는데...\n그런 우려는 만족과 안심과 추천으로 바뀌었답니다.\n주변에서 이사한다고 하면 저는 GS이사몰 추천하려구요~\n다음에 또 이사해도 저흰 여기서!!ㅎㅎ 그때까지도 계속 사업 번창하시겠죠?ㅎㅎ\n정말 힘든 일인 이사를 덕분에 무사히 잘 마치고 나니 마음이 놓이고 뿌듯합니다.\nGS이사몰팀분들, 거의 매일 스케줄이 있으신 것 같던데...\n항상 몸 건강하시고, 일도 순항하시길 바라요^^\n이달 말에 어머님댁 이사때 또 뵙겠습니다.\n(그때도 여유가 되면 또 후기 남길게요...^^)\n감사합니다.",
+  77: "지난주에 GS이사몰을 통해서 이사했어요\n날짜가 급하게 잡혀서 첫 전화를 했었는데\n현장 견적 내주시고 다른 곳과도 비교해보라고 자신감 있는 모습에서 신뢰를 느꼈어요\n팀장님을 필두로 총 6분이 오셨는데 정말 손발이 잘 맞고 일을 잘하시는 분들이구나 느꼈어요\n허둥지둥하는 모습 하나 없이 일을 착착착 일사천리로 하시더라구요\n저희가 평수를 많이 줄여서 이사하는거라 짐을 많이 처리했는데도 막상 이사때 보니 짐이 정말 많더라구요\n이 짐을 다 어떻게 정리해야 하나 정말 머릿속이 하애졌었는데\n그 많은 짐들을 잘 안쓰는 건 안쪽으로 자주 쓰는건 손에 잘 닿는곳으로\n알아서 착착착 다 정리해서 넣어주셔서 2번 정리할 필요가 없었어요\n또 마무리 청소까지 확실하게 해주시는 모습 너무 감동했습니다\n오늘 회사에 출근해서 이사잘했다고 직원들한테 열심히 자랑했습니다\n다음 이사 때도 연락드리겠습니다",
+  84: "10월 21일날 도봉구에서 경기도 광명으로 이사를 했는데요.\n어쩜 정말 최정예 팀원들이 오셨는지 오자마자 일사불란하게 이사짐을 싸시는데 놀랐어요.\n순식간에 짐들이 모두 사라지는걸 보면서 감탄했다는..ㅋㅋ\n그리고 팀원들간의 협업이 너무너무 잘 맞더라구요!\n이사 전에 유튜브에서 이사후기를 많이 봤는데 너무 안좋은 후기를 많이 봐서 걱정하고 편견까지 생겼는데\n그런 편견을 단번에 없애줬던 팀입니다!\n이사하면서 주방 정리해주시는 이모님과 수다도 떨며 너무 기분 좋게 이사를 마쳤어요.^^\n이사 들어간 집에 가구가전들 상처 하나 없이 도착하고 또 어쩜 짐 정리를 이렇게 잘해주시는지 감동감동..ㅠㅠ\n이사를 모두 마치고 이모님께 오래오래 이사 짐캐리에서 일해달라고 부탁드렸네요...ㅋㅋ\n전세로 왔으니 언젠가 또 이사 갈텐데 그때 다시 만나자고 했어요.ㅋ\n광명으로와서 다시 이사 해주실지 모르겠지만 이사갈 때 또 연락 드릴게요!ㅎㅎ\n소장님의 아픈 다리 얼른 나으시길 바라고 이사해주신 이 집에서 잘 살겠습니다.^^\n어제 하루 종일 저희 집 이사 처음부터 끝까지 정성을 다해 일해 주신 팀원분들께도 감사해요~~!!",
+  46: "서울기온 영하 10도\n체감기온 영하14도😵\n눈이 안오는게 어디냐라고 위안을 삼으며 이사시작했어요\n사다리차는 약속시간보다 일찍 오셔서 자리 잡아주셨고 한팀으로 움직이신다는 gs이사몰 전문가님들께서 오셔서\n냉장고 세탁기 티비 모니터 등등을 정말\n꼼꼼히 포장해주시고 옮겨주셨어요\n\n각각 맡으신 구역대로 정리하시고 이삿짐넣어주셨어요\n같은 구조로 이사가는거라\nctrl+c\nctrl+v로 복붙이사를 원했고 그렇게 말씀드렸는데\n오전에 오셔서 쓱보시더니 바로 똑같이 넣어주시더라구요 넘 신기했어요\n주방도 제가 손댈곳 거의 없이 너무 정리잘해주셨고\n큰방 안방 창고 최고였어요\n큰방 안방 창고 최고였어요\n날씨가 추우니까 화분이랑 티비도 얼수있다고 미리 옮겨주시더라구요\n견적받을때 부터 매니저님이 친절하게 응대해주시고\n일정조율도 배려있게 해주셔서 첫인상이 좋았는데\n오늘오신 전문가님들도 서로 웃으시며 화내거나 찡그리시는거 하나없이 일하셔서 보는 저도 기분좋았어요 😄\n여러번 사무실이사+ 가정집이사 등을 해본 저희가족도\n이렇게 잘하는 이사팀 드물다며 칭찬을 아끼지않더라구요\n너무 추우신날 고생하셔서\n가시는길에 내려가서 인사드렸는데\n덕담도 해주시고 춥다고 되려 걱정까지 해주셨어요\n이사결정되고\n이것저것 알아보고 결정할것 많아서\n너무 스트레스였는데\n가장 큰 이사자체를 아주 깔끔하게 끝마치게 되어서 너무 기분 좋아요 저는 강추합니다",
+  33: "이래저래 일이 좀 있어서 이사가 힘들었어요\n집 계약도 꼬이고 이것저것 취소해야 할 것도 많았고..\n미리 날짜까지 지정해서 계약해둔 상황이라 날짜 변경도 무리였고 죄송한 상황에 저희쪽 힘든거 자세히 말씀드리지 못\n했지만 힘든상황이신거 같다며 최대한 맞춰서 도와주실수 있으면 좋겠다고 감사하게도 먼저 말씀해주시고 계속 알아봐\n주시구요\n정말 많이 배려해주셔서 이사는 진행했지만\n원래 견적과 다르게 언덕에 연식있는 빌라로 이사를 오게 되었는데 길도 험하고 저희가 원체 짐도 많아서 5톤트럭 주차\n도 힘들고 사다리도 힘들고 이사후에 도배까지 껴있어서 정리를 해주실 수 조차 없는 상황이었어요\n정말 너무너무너무 고생을 많이 하셨어요..ㅜㅜ\n그 와중에도 정신못차리고 있는 저희 한테 이렇게 저렇게 도배하고 나서 정리하기 최대한 편하게 해놓고 가시겠다고 붙\n잡고 설명해주시고 하는데 그땐 정신놓고 있던중이었지만 나중에 정리하면서 보니 정말 신경써주신게 느껴지더라구요\n너무 죄송하고 경황도 없고 뭘 어떻게 해야할지도 모르겠어서 손도 못대고 정신도 못차리고 계속 죄송하다고 했더니\n괜찮다 저희가 원래 하는일이다 정리를 못해주시고 가셔서 그게 너무 걸린다 몰아서 정리하려고 하면 병나니까 차근차\n근 천천히 정리해야한다 말씀해주시고 정말 너무 감사하게도 끝나고 가시는 길 까지 계속 염려해주셨어요\n가실때 가시는 트럭뒤로 얼마나 인사를 했는지 몰라요^^;;\n덕분에 도배도 잘 마무리하고 어느정도 이제서야 좀 집정리가 되어서 글 남깁니다\n너무 고생많으셨던 우리 GS이사팀 정말 감사드려요\n이건 뭐..후기도 아니고 그저 감사인사여요\n그날 팀원분들 너무 고생시킨 그 험난한 이사..\n저 누군지 기억하시려나요..?^^;;\n너무 고생하셔서 염치없지만 다음에 저희 다음 이사때 꼭 다시 와주시기로 하신거 잊지않으셨죠..?ㅡㅜ\n빨리 글남기고 싶었는데 정리가 너무 더뎌져서 이제야 글 남깁니다\n덕분에 몸도 마음도 힘들었던 상황에서 이루말할수 없이 크게 위안받았어요\n우리 GS이사몰 사장님 실장님 팀원분들 모든 분들께 받은 그 모든 배려 잊지않겠습니다\n저한테는 모두 은인들이셔요\n정말 감사했습니다!!\n다음에도 꼭 잘부탁드려요!!^^",
+  80: "이사가 결정되고 제일큰 고민 걱정이 이사센터선택이었어요\n주변지인들한테도 묻고 어플을이용해야하나 고민하던중 강봉원에서 이사후기를 보게되었죠 만족하셨다고했고 그렇게 협력업체\nGS이사몰을 알게되어서 견적을보기로 했는데 집에오신날 바로계약했어요^^ 처음엔 말씀을 너무잘하셔서 나 홀린건가싶기도했\n는데 해보고 나니 잘한선택이었네요\n아니 왜 하필 제가 이사하는 그날 비가올까요 ㅠㅠ\n비오는날 이사라 물건젖을까 걱정이 걱정이\n약속한시간에 젊은분들이 우르르 오셨어요\n팀워크가 잘맞으시더라고요 착착 짐정리가 진행되었죠 비가왔지만 제 물건들은 비가온줄 모르겠더라고요 ^^ 잘포장해서 옮겨주셨\n어요\n원하는부분 소통도 잘되고 친절하시고 진짜 다들 인상도좋으시고 상냥하셨어요\n이사내내 분위기가 좋았어요 비오는날이어서\n더힘드셨을텐데도 웃으시며 응대해주시고 열심히 해주셔서 감사했습니다\n사정상 티비를 벽에걸수도 스탠드로 세울수도 없어서 이동식 거치대를 산게 있는데 그것도 다조립해주시고 깔끔하게 마무리 해주\n고 가셨답니다\nGS이사몰 강추합니다",
+};
+
+// ============ 매핑 ============
+// 메인 키워드 (카드 주인공) — 고객이 실제 묻는 질문 형태
+// 2줄 레이아웃: \n 기준으로 줄바꿈
+const keywordMap = {
+  '가구파손':   '파손\n없나요?',
+  '당일추가금': '추가금\n안 붙나요?',
+  '정확한견적': '견적\n정확한가요?',
+  '가전연결':   '세탁기\n연결 되나요?',
+  '불친절':     '기사님\n친절한가요?',
+  '한국인팀':   '한국인\n팀인가요?',
+  '짐정리':     '정리까지\n해주나요?',
+  '돌발상황':   '비 오면\n어떻게 하나요?'
+};
+
+// 작은 키워드 (좌상단 — 이사 타입)
+const typeLabel = {
+  '일반포장': '일반 포장이사',
+  '보관이사': '보관이사',
+  '신혼': '신혼 첫이사',
+  '부모님': '부모님 이사',
+  '원룸': '원룸 이사',
+  '장거리': '장거리 이사',
+  '재이용': '재이용 고객'
+};
+
+function getKeyword(r) {
+  // 각 리뷰가 가진 고유 질문 키워드 사용
+  if (r.question) return r.question;
+  // fallback: 카테고리 기반 매핑 (하위 호환)
+  if (r.concerns && r.concerns.length > 0) {
+    return keywordMap[r.concerns[0]] || r.concerns[0];
+  }
+  return r.type;
+}
+
+// ============ 벤토 패턴 ============
+// 18장 — 경계선 어긋남 유지, 색 분포 밸런스
+// light(기본) 지배적 / orange·black 액센트 / dark 리듬
+const bentoPattern = [
+  { h: 'l', v: 'orange' },
+  { h: 'm', v: 'light' },
+  { h: 's', v: 'black' },
+  { h: 'm', v: 'light' },
+  { h: 'l', v: 'light' },
+  { h: 's', v: 'dark' },
+  { h: 'm', v: 'light' },
+  { h: 'l', v: 'dark' },
+  { h: 's', v: 'orange' },
+  { h: 'm', v: 'light' },
+  { h: 'm', v: 'light' },
+  { h: 's', v: 'dark' },
+  { h: 's', v: 'light' },
+  { h: 'm', v: 'orange' },
+  { h: 'l', v: 'light' },
+  { h: 's', v: 'light' },
+  { h: 'm', v: 'dark' },
+  { h: 'l', v: 'light' }
+];
+
+let activeType = 'all';
+
+function render() {
+  const grid = document.getElementById('bento');
+  let filtered = reviews.filter(r => activeType === 'all' || r.type === activeType);
+
+  const genreRank = { '찐감동': 4, '디테일': 3, '비교형': 2, '일반': 1 };
+  filtered.sort((a, b) => {
+    const g = genreRank[b.genre] - genreRank[a.genre];
+    return g !== 0 ? g : b.id - a.id;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;font-size:13px;opacity:0.5;letter-spacing:0.05em">결과 없음</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((r, i) => {
+    const pattern = bentoPattern[i % bentoPattern.length];
+    const keyword = getKeyword(r);
+    const subKeyword = typeLabel[r.type] || r.type;
+
+    // Column parallax multiplier
+    // 카드가 어느 열에 속하는지 (모바일 2열 기준) + 미세 편차
+    // 왼쪽 열(짝수 인덱스) = 1.0, 오른쪽 열(홀수) = 0.75 → 20~25% 속도 차
+    // 여기에 카드별 미세 편차(±0.1) 추가해 "액체 유영" 느낌
+    const isRightCol = i % 2 === 1;
+    const baseMult = isRightCol ? 0.75 : 1.0;
+    const jitter = ((i * 37) % 20 - 10) / 100; // -0.10 ~ +0.10
+    const parallaxMult = (baseMult + jitter).toFixed(2);
+
+    const styleVars = `--card-index:${i}; --parallax-mult:${parallaxMult};`;
+
+    return `
+      <article class="cell h-${pattern.h} v-${pattern.v}" data-id="${r.id}" style="${styleVars}">
+        <div class="cell-top">
+          <span class="cell-sub">${subKeyword}</span>
+          <svg class="cell-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/>
+            <polyline points="8 7 17 7 17 16"/>
+          </svg>
+        </div>
+        <div class="cell-keyword">${keyword}</div>
+      </article>
+    `;
+  }).join('');
+
+  // 진입 애니메이션이 끝난 후 .settled 클래스 부여 (이후 parallax transform 활성)
+  // 가장 늦게 들어오는 카드 기준 delay 계산: (n-1) * 0.05s + 0.7s (애니메이션 길이)
+  const totalDuration = filtered.length * 50 + 700;
+  setTimeout(() => {
+    document.querySelectorAll('.cell').forEach(c => c.classList.add('settled'));
+  }, totalDuration);
+}
+
+document.getElementById('type-chips').addEventListener('click', e => {
+  if (!e.target.matches('.chip')) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  activeType = e.target.dataset.type;
+  render();
+});
+
+render();
+
+// ============ 스크롤 기반 Column Parallax ============
+// 스크롤 속도에 따라 --parallax-y 갱신 → 각 카드는 자신의 --parallax-mult로 변위 결정
+// 왼쪽 열 1.0배 / 오른쪽 열 0.75배 + 카드별 ±0.1 jitter → 액체 유영감
+(function setupParallax() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  let idleTimer;
+  const MAX_OFFSET = 14;      // 최대 변위 (px) — 열별 multiplier 곱해지므로 여유있게
+  const VELOCITY_CAP = 50;    // 속도 정규화 기준
+
+  function applyOffset(offset) {
+    document.documentElement.style.setProperty('--parallax-y', offset + 'px');
+  }
+
+  function onScroll() {
+    const currentY = window.scrollY;
+    const delta = currentY - lastScrollY;
+
+    // 스크롤 방향과 반대로 카드가 살짝 끌려옴 (탄성감)
+    const velocity = Math.max(-VELOCITY_CAP, Math.min(VELOCITY_CAP, delta));
+    const offset = -(velocity / VELOCITY_CAP) * MAX_OFFSET;
+
+    applyOffset(offset);
+
+    lastScrollY = currentY;
+
+    // 멈추면 스프링 이징으로 원위치 복귀 (transition이 처리)
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => applyOffset(0), 60);
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+})();
+
+// ============ Bottom Sheet 로직 ============
+(function setupBottomSheet() {
+  const sheet = document.getElementById('sheet');
+  const overlay = document.getElementById('sheet-overlay');
+  const handle = document.getElementById('sheet-handle');
+  const closeBtn = document.getElementById('sheet-close');
+  const grid = document.getElementById('bento');
+
+  const subEl = document.getElementById('sheet-sub');
+  const titleEl = document.getElementById('sheet-title');
+  const metaEl = document.getElementById('sheet-meta');
+  const highlightEl = document.getElementById('sheet-highlight');
+  const fulltextEl = document.getElementById('sheet-fulltext');
+
+  function openSheet(reviewId) {
+    const review = reviews.find(r => r.id === reviewId);
+    if (!review) return;
+
+    // 콘텐츠 채우기
+    subEl.textContent = typeLabel[review.type] || review.type;
+    titleEl.textContent = review.question || getKeyword(review);
+    metaEl.innerHTML = `
+      <span>${review.nickname}</span>
+      <span class="dot"></span>
+      <span>${review.date}</span>
+      <span class="dot"></span>
+      <span>#${String(review.id).padStart(3, '0')}</span>
+    `;
+    highlightEl.textContent = review.highlight || '';
+
+    // 전체 리뷰 원본
+    const fullText = fullTextMap[review.id];
+    if (fullText) {
+      // 문단 단위로 분리해서 <p>로 감싸기 (두 줄 이상 빈 줄 = 문단 구분)
+      const paragraphs = fullText.split(/\n\n+/).filter(p => p.trim());
+      fulltextEl.innerHTML = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+    } else {
+      fulltextEl.innerHTML = '<p>전체 리뷰를 불러오는 중입니다.</p>';
+    }
+
+    // 스크롤 위치 맨 위로
+    document.getElementById('sheet-body').scrollTop = 0;
+
+    // 시트 열기
+    document.body.classList.add('sheet-open');
+    overlay.classList.add('open');
+    sheet.classList.add('open');
+    sheet.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSheet() {
+    document.body.classList.remove('sheet-open');
+    overlay.classList.remove('open');
+    sheet.classList.remove('open');
+    sheet.setAttribute('aria-hidden', 'true');
+    // 드래그 transform 리셋
+    sheet.style.transform = '';
+    sheet.classList.remove('dragging');
+  }
+
+  // 카드 클릭 → 시트 열기 (이벤트 위임)
+  grid.addEventListener('click', e => {
+    const cell = e.target.closest('.cell');
+    if (!cell) return;
+    const id = parseInt(cell.dataset.id, 10);
+    if (id) openSheet(id);
+  });
+
+  // 닫기 트리거들
+  overlay.addEventListener('click', closeSheet);
+  closeBtn.addEventListener('click', closeSheet);
+
+  // ESC로 닫기
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sheet.classList.contains('open')) {
+      closeSheet();
+    }
+  });
+
+  // 핸들 드래그로 닫기 (터치 + 마우스)
+  let dragStartY = 0;
+  let dragCurrentY = 0;
+  let isDragging = false;
+
+  function onDragStart(clientY) {
+    isDragging = true;
+    dragStartY = clientY;
+    sheet.classList.add('dragging');
+  }
+
+  function onDragMove(clientY) {
+    if (!isDragging) return;
+    dragCurrentY = clientY - dragStartY;
+    if (dragCurrentY < 0) dragCurrentY = 0; // 위로는 못 당김
+    sheet.style.transform = `translateY(${dragCurrentY}px)`;
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    sheet.classList.remove('dragging');
+    // 100px 이상 당겼으면 닫기, 아니면 복귀
+    if (dragCurrentY > 100) {
+      closeSheet();
+    } else {
+      sheet.style.transform = '';
+    }
+    dragCurrentY = 0;
+  }
+
+  // Touch events (모바일)
+  handle.addEventListener('touchstart', e => {
+    onDragStart(e.touches[0].clientY);
+  }, { passive: true });
+  handle.addEventListener('touchmove', e => {
+    onDragMove(e.touches[0].clientY);
+  }, { passive: true });
+  handle.addEventListener('touchend', onDragEnd);
+
+  // Mouse events (데스크탑 — 데스크탑에선 핸들 숨겨져 있지만 대비)
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault();
+    onDragStart(e.clientY);
+    const moveHandler = ev => onDragMove(ev.clientY);
+    const upHandler = () => {
+      onDragEnd();
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+    };
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
+  });
+})();
+</script>
+</body>
+</html>
