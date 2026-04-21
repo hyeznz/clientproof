@@ -411,67 +411,79 @@
     }
   }
 
-  /* ============ Bottom Sheet ============ */
+  /* ============ Floating Card Modal (Glassmorphism) ============ */
+  /* 오버레이: 단순 어둡게만 (블러 없음) */
   .sheet-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0);
     z-index: 100;
     pointer-events: none;
-    transition: background .35s ease;
+    background: rgba(0, 0, 0, 0);
+    transition: background .4s ease;
   }
   .sheet-overlay.open {
-    background: rgba(0, 0, 0, 0.35);
     pointer-events: auto;
+    background: rgba(0, 0, 0, 0.35);
   }
 
+  /* 시트: Glassmorphism card — 반투명 + 자체 블러 + 유리 테두리 */
   .sheet {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
     z-index: 101;
-    background: var(--bg);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    max-height: 90vh;
-    transform: translateY(100%);
-    transition: transform .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    max-height: calc(85vh - 24px);
+    /* 핵심: 반투명 배경 + 자체 블러 → 뒤 콘텐츠 색상이 번져 들어옴 */
+    background: rgba(240, 240, 240, 0.72);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    backdrop-filter: blur(28px) saturate(140%);
+    /* 유리 엣지 테두리 */
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 24px;
+    transform: translateY(calc(100% + 24px));
+    transition: transform .5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity .3s ease;
+    opacity: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     padding-bottom: env(safe-area-inset-bottom);
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+    /* 넓고 부드러운 그림자 (레퍼런스처럼 spread 큰) */
+    box-shadow: 0 12px 60px rgba(0, 0, 0, 0.12),
+                0 4px 20px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);  /* 상단 내부 하이라이트 */
   }
   .sheet.open {
     transform: translateY(0);
+    opacity: 1;
   }
-  /* 드래그 중에는 transition 비활성 (손가락 움직임에 즉시 반응) */
   .sheet.dragging {
     transition: none;
   }
 
-  /* 데스크탑에선 중앙 모달 형태 */
+  /* 데스크탑 */
   @media (min-width: 768px) {
     .sheet {
       left: 50%;
       right: auto;
-      bottom: 50%;
-      transform: translate(-50%, calc(50% + 100vh));
-      width: 560px;
+      bottom: auto;
+      top: 50%;
+      transform: translate(-50%, calc(-50% + 60px));
+      width: 520px;
       max-width: calc(100vw - 48px);
       max-height: 80vh;
-      border-radius: 20px;
     }
     .sheet.open {
-      transform: translate(-50%, 50%);
+      transform: translate(-50%, -50%);
     }
   }
 
   /* 드래그 핸들 */
   .sheet-handle {
     flex-shrink: 0;
-    padding: 12px 0 8px;
+    padding: 12px 0 4px;
     display: flex;
     justify-content: center;
     cursor: grab;
@@ -479,43 +491,47 @@
   }
   .sheet-handle::before {
     content: '';
-    width: 40px;
+    width: 36px;
     height: 4px;
     background: var(--dark-gray);
-    opacity: 0.25;
+    opacity: 0.18;
     border-radius: 2px;
   }
   @media (min-width: 768px) {
-    .sheet-handle { display: none; }  /* 데스크탑은 핸들 불필요 */
+    .sheet-handle { display: none; }
   }
 
-  /* 닫기 버튼 */
+  /* 닫기 버튼 — 글라스 위에서 잘 보이도록 */
   .sheet-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: var(--light-gray);
-    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 2;
     color: var(--dark-gray);
+    transition: background .2s;
   }
+  .sheet-close:hover { background: rgba(0, 0, 0, 0.12); }
   .sheet-close svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   /* 시트 상단 (타이포그래피 섹션) */
   .sheet-header {
     flex-shrink: 0;
-    padding: 24px 24px 16px;
-    border-bottom: 1px solid var(--ink-10);
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
   .sheet-sub {
     font-size: 12px;
@@ -573,7 +589,7 @@
     color: var(--black);
     padding: 0 0 20px;
     margin-bottom: 20px;
-    border-bottom: 1px solid var(--ink-10);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     position: relative;
   }
   .sheet-highlight::before {
@@ -655,7 +671,7 @@
 <!-- ========== 하단 룰 라인 ========== -->
 <div class="bottomline"></div>
 <div class="footer-info mono">
-  <span>MOVING CARRY CO. — REVIEW PAGE / V02W03</span>
+  <span>MOVING CARRY CO. — REVIEW PAGE / V02W06</span>
   <span>VERIFIED BY 강봉원 CAFE</span>
 </div>
 
