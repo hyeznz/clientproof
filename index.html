@@ -527,10 +527,10 @@
     height: 14px;
   }
 
-  /* 시트 상단 (타이포그래피 섹션) */
+  /* 시트 상단 (컴팩트 — 헤더 고정 영역 최소화) */
   .sheet-header {
     flex-shrink: 0;
-    padding: 20px 24px 16px;
+    padding: 16px 24px 12px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
   .sheet-sub {
@@ -539,19 +539,20 @@
     letter-spacing: -0.01em;
     color: var(--dark-gray);
     opacity: 0.7;
-    margin-bottom: 12px;
+    margin-bottom: 4px;       /* 12px → 4px: 태그와 타이틀 밀착 */
   }
   .sheet-title {
     font-weight: 800;
-    font-size: 32px;
-    letter-spacing: -0.04em;
-    line-height: 1.18;
-    white-space: pre-line;
-    word-break: keep-all;
+    font-size: 19px;           /* 32px → 19px (약 60%) */
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+    white-space: nowrap;       /* pre-line → nowrap: 무조건 1줄 */
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--black);
   }
   @media (min-width: 768px) {
-    .sheet-title { font-size: 40px; }
+    .sheet-title { font-size: 24px; }  /* 40px → 24px */
   }
 
   /* 시트 본문 (스크롤 가능) */
@@ -561,6 +562,23 @@
     padding: 20px 24px 32px;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    /* Firefox: 얇은 스크롤바, 레일 투명 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.15) transparent;
+  }
+  /* Webkit (Chrome, Safari, Edge): thumb만 보이는 미니멀 스크롤 */
+  .sheet-body::-webkit-scrollbar {
+    width: 4px;
+  }
+  .sheet-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sheet-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 4px;
+  }
+  .sheet-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.25);
   }
   .sheet-meta {
     display: flex;
@@ -671,7 +689,7 @@
 <!-- ========== 하단 룰 라인 ========== -->
 <div class="bottomline"></div>
 <div class="footer-info mono">
-  <span>MOVING CARRY CO. — REVIEW PAGE / V02W06</span>
+  <span>MOVING CARRY CO. — REVIEW PAGE / V02W07</span>
   <span>VERIFIED BY 강봉원 CAFE</span>
 </div>
 
@@ -1001,7 +1019,7 @@ render();
 
     // 콘텐츠 채우기
     subEl.textContent = typeLabel[review.type] || review.type;
-    titleEl.textContent = review.question || getKeyword(review);
+    titleEl.textContent = (review.question || getKeyword(review)).replace(/\n/g, ' ');
     metaEl.innerHTML = `
       <span>${review.nickname}</span>
       <span class="dot"></span>
