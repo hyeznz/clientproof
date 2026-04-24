@@ -1,0 +1,120 @@
+# 깨지면 안 되는 디자인 공식
+
+이 문서의 규칙은 사용자(알론)와 여러 번 반복 작업 끝에 확립된 원칙들. 
+"이러면 안 되는데..."를 수십 번 반복한 결과. **수정 작업 시 항상 이 공식을 먼저 체크.**
+
+---
+
+## 1. 카드 디자인 (Bento 그리드) — 7공식
+
+`.cell-keyword` (카드 좌하단 제목)에 적용되는 핵심 공식들.
+
+| # | 공식 | 구현 포인트 |
+|---|---|---|
+| ① | 모든 탭의 모든 카드 FS 동일 | 전역 단일 FS (CSS clamp 또는 JS 전역 계산) |
+| ② | 어떤 화면 폭에서도 글자 잘림 금지 | CSS clamp + 재배정 + 자연 wrap 폴백 |
+| ③ | 좌측 하단 정렬 | `margin-top: auto` + `align-items: flex-start` |
+| ④ | 긴 제목 후기는 m+ 카드에 배정 | `rearrangeForFit` DESC zip + promote |
+| ⑤ | 벽돌 배열 시퀀스 유지 | `getPatternForFilter` 시드 셔플 결과 불변 |
+| ⑥ | 화면 넓어지면 FS도 커짐 | CSS clamp의 vw 단위 (모바일) |
+| ⑦ | 컬러는 포인트컬러(주홍)가 첫 4장 안에 노출 | `scoreArrangement`의 rule G |
+
+**중요**: ①과 ④는 때로 충돌함. 긴 제목이 너무 많으면 m+ 슬롯 부족 → 재배정 실패 
+→ xs에 긴 제목 → 세로 클리핑. 해결: DESC zip 후 **promote 단계**로 
+해당 카드만 사이즈 승격 (xs→s→m). 벽돌 패턴 살짝 바뀌지만 글자 잘림이 우선순위.
+
+### CSS 실제 값
+
+```css
+.cell-keyword {
+  font-size: clamp(14px, 6.8vw, 26px);  /* 모바일: 넓으면 26px, 좁으면 축소 */
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* 공식 ③ */
+  margin-top: auto;         /* 공식 ③ */
+}
+@media (min-width: 768px) {
+  .cell-keyword { font-size: 36px; line-height: 1.18; }
+}
+.cell-keyword .kw-line {
+  display: block;
+  white-space: normal;      /* 자연 wrap 폴백 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+```
+
+### 카드 내부 패딩
+
+```css
+--pad: clamp(9px, 4.8vw, 18px);  /* 좁은 화면에서 자동 축소 */
+```
+
+---
+
+## 2. 메인 타이틀 (Hero) — blockFit 공식
+
+```
+'싸게하는 곳'은 많아도
+'제대로 캐리하는 곳'은
+흔치 않아요
+```
+
+| # | 공식 | 구현 포인트 |
+|---|---|---|
+| ① | 3줄 고정 — 화면 비율 달라져도 유지 | 각 줄을 `<span class="mt-line">`으로 감싸 `nowrap` |
+| ② | 폰트만 스케일 (줄 구조 불변) | JS로 measure → 각 줄 font-size 주입 |
+| ③ | 가로폭이 배너 박스와 딱 일치 | JS가 `.banner-inner.clientWidth`를 타깃으로 사용 |
+| ④ | 흔치 않아요 줄도 윗 줄과 같은 가로폭 | Photoshop "Justify All" 방식 — `MAX_SIZE_RATIO` 캡 + `letter-spacing` 분배 |
+| ⑤ | 폰트는 KBLJumpCondensed | 좁은 화면에서도 긴 카피 수용 |
+| ⑥ | 2번째 줄만 오렌지 (`.mt-hi`), 나머지는 검정 |  |
+| ⑦ | '흔치 | 않아요' 중간 공백 과다 → word-spacing 음수로 상쇄 | `.mt-line--tight { word-spacing: -0.1em }` |
+| ⑧ | '흔치'를 오른쪽으로 살짝 들여쓰기 | `.mt-line--tight { padding-left: 0.04em }` |
+
+### 알고리즘 (Photoshop blockFit 원리)
+
+1. 모든 줄을 100px 기준 폰트로 자연 너비 측정
+2. 가장 긴 줄 기준으로 표준 폰트 크기 `baseFS` 산출 (자간 0으로 완전 맞음)
+3. 짧은 줄은 `MAX_SIZE_RATIO = 2.15`까지만 폰트 확대 (더 필요하면 자간 분배)
+4. 남은 공간은 `letter-spacing`으로 균등 채움 (반복 피팅으로 서브픽셀까지)
+
+---
+
+## 3. 배너 박스
+
+| 공식 | 값 |
+|---|---|
+| 배경 | 오렌지 (`var(--orange)`) |
+| 정렬 | 중앙 (`text-align: center`) |
+| 폰트 사이즈 | 모바일 14.5px / PC 16px |
+| line-height | 1.7 (숨통) |
+| 강조 키워드 | `<strong>`: "실제 이사를 마친 고객님들께서 직접 남긴 이야기", "다음에도 꼭 여기서", "직접 경험해보세요." |
+| 구조 | 4줄 문장, 각 문장 사이 `<br>` |
+
+---
+
+## 4. 후기 데이터
+
+| 공식 | 설명 |
+|---|---|
+| titleBreaks ID별 고정 | 각 후기의 카드 제목은 `titleBreaks[id]`의 `\n` 기준으로 고정. 화면 바뀌어도 줄 구조 불변. |
+| 하이라이트 제외 중복 판정 | `isDuplicateAcrossTabs(r)` = 하이라이트 태그 제외 태그 수가 2개 이상 |
+| 유형별이사/실력의차이 중복 제외 | 이 두 탭은 고유 후기만 노출 (duplicate 제거) |
+| 다른 탭의 중복 → 블루 오버라이드 | `v-blue` 클래스로 치환 (체크용) |
+
+---
+
+## 5. 상호명 규약
+
+- **본문**: "GS", "GS이사몰", "지에스", "지에스이사몰" 등 구 상호명 → **"이사짐캐리"** 통일
+- **헤더 안내 문구**: 상호명 변경 설명이라 `(GS이사몰/지에스이사몰)` 그대로 유지
+- **조사 자연스러움 필수**: "리"(모음 종성)에 맞는 조사 사용
+  - 이사짐캐리를 (O) / 이사짐캐리을 (X)
+  - 이사짐캐리는 (O) / 이사짐캐리은 (X)
+  - 이사짐캐리가 (O) / 이사짐캐리이 (X, 주어일 때)
+  - 이사짐캐리였어요 (O) / 이사짐캐리이었어요 (X)
+  - 이사짐캐리와 (O) / 이사짐캐리과 (X)
+  - 이사짐캐리로 (O) / 이사짐캐리으로 (X)
+  - 이사짐캐리라고 (O) / 이사짐캐리이라고 (X)

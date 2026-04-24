@@ -197,6 +197,16 @@
     white-space: nowrap;
     line-height: 1.15;
   }
+  /* 짧은 줄 전용 미세 조정 (예: "흔치 않아요")
+     - word-spacing 음수: letter-spacing 확장 시 단어 사이(공백) 간격이
+       char-to-char 간격의 4~5배로 과도해지는 것을 시각적으로 상쇄
+     - padding-left: 다른 줄의 따옴표 side-bearing 때문에 생기는
+       시각적 들여쓰기에 맞추어 첫 글자를 살짝 오른쪽으로 정렬
+     - padding은 em 기반이라 폰트 크기에 비례해 자동 스케일 */
+  .main-title .mt-line--tight {
+    word-spacing: -0.1em;
+    padding-left: 0.04em;
+  }
   /* 메인 타이틀 속 따옴표 강조 키워드 — 오렌지 포인트로 시선 유도 */
   .main-title .mt-hi {
     color: var(--orange);
@@ -441,20 +451,29 @@
   }
   .cell:hover .cell-arrow { opacity: 1; transform: translate(1px, -1px); }
 
-  /* 좌하단 메인 키워드 — 카드 크기와 무관하게 동일 크기로 통일 */
-  /* 기준: "인생 최악의 이사, 여기서 끝" × 1.5배 */
+  /* 좌하단 메인 키워드 — 고정 줄바꿈 + 카드별 동적 폰트 사이징
+     - 각 줄(.kw-line)은 nowrap 블록으로 자기 콘텐츠 폭만큼만 차지
+     - flex-column + align-items:flex-start: JS가 offsetWidth로 실제 폭 측정 가능
+     - JS 'fitCardTitles' 가 카드 가로/세로 제약에 맞춰 font-size만 조정 */
   .cell-keyword {
     font-family: var(--font-display-card);
     font-weight: 700;
-    font-size: 26px;
-    line-height: 1.2;
+    font-size: 26px;             /* JS fit의 초기값 — 실제 크기는 카드마다 계산됨 */
+    line-height: 1.18;
     letter-spacing: -0.03em;     /* 점프체는 각진 서체 — 기존 -0.055em은 과도, 완화 */
     text-align: left;
-    white-space: normal;         /* 자연스러운 wrap */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: auto;            /* 하단으로 밀기 */
+    /* fallback: JS가 동작 실패해도 최소한 줄바꿈은 유지 */
     word-break: keep-all;
     overflow-wrap: break-word;
-    hyphens: none;
-    margin-top: auto;            /* 하단으로 밀기 */
+  }
+  .cell-keyword .kw-line {
+    display: block;
+    white-space: nowrap;
+    max-width: 100%;             /* JS fit 전 초기 렌더에서도 카드 밖으로 튀어나가지 않게 */
   }
 
   /* ============ 하단 룰 라인 ============ */
@@ -812,7 +831,7 @@
 
 <!-- ========== 거대 타이틀 ========== -->
 <div class="title-block">
-  <h1 class="main-title"><span class="mt-line">&lsquo;싸게 하는 이사&rsquo;는 많아도,</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 이사&rsquo;</span>는</span><span class="mt-line">흔치 않아요</span></h1>
+  <h1 class="main-title"><span class="mt-line">&lsquo;싸게하는 곳&rsquo;은 많아도</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 곳&rsquo;</span>은</span><span class="mt-line mt-line--tight">흔치 않아요</span></h1>
 </div>
 
 <!-- ========== 오렌지 배너 (후기 진정성 안내) ========== -->
@@ -904,8 +923,10 @@
   const lines = Array.from(h1.querySelectorAll('.mt-line'));
   if (!lines.length) return;
 
-  const MAX_SIZE_RATIO = 2.15;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
-                                // 1.8 → 2.15 상향: 자간 ~50% 축소, 폰트 ~19% 확대
+  const MAX_SIZE_RATIO = 1.8;   // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
+                                // 텍스트 짧아져 line1/line3 자연폭 비율이 2.4→2.0으로 감소.
+                                // 2.15로 두면 캡이 안 걸려 letter-spacing=0이 되어 blockFit 효과 상실.
+                                // 1.8로 낮춰 ~10% letter-spacing 분배 보존.
 
   const fit = () => {
     const targetWidth = bannerInner.clientWidth;
@@ -1150,9 +1171,96 @@ const typeLabel = {
 // 메인태그 순서 (그룹핑용)
 const mainTagOrder = ['실력의차이', '가격', '친절응대', '정리정돈', '고난도돌파', '책임감', '유형별이사', '속전속결', '재이사맛집'];
 
+// ============ 카드 제목 고정 줄바꿈 매핑 ============
+// ID별로 미리 정한 줄바꿈을 적용 (화면 비율 바뀌어도 줄 구조 유지).
+// 폰트 크기는 JS fitCardTitles()가 카드별로 동적 계산.
+// 의미 단위(쉼표/구절) 기준으로 2~4줄로 분할.
+const titleBreaks = {
+  // ===== best =====
+  85: '인생 최악의\n이사,\n여기서 끝',
+  84: '이삿짐 편견,\n단번에\n박살냄',
+  82: '저희 부부는\n멀뚱멀뚱\n구경만',
+  80: '비 오는 날?\n젖은 짐\n제로!',
+  79: '진정한\n이사계의\n해결사 등판',
+  78: '동생도 찐\n감탄한\n포장이사',
+  77: '머리 하얘진\n짐,\n알아서 착착',
+  76: '13평 축소\n이사도\n문제없음',
+  75: '20년 묵은\n짐도\n완벽 클리어',
+  73: '20년 만의\n이사,\n역시 전문가',
+  72: '냉장고 AS까지,\n한 시간\n달려옴',
+  69: '땀이\n비 온 줄',
+  68: '악조건 이사,\n인상 한 번\n없음',
+  67: '4년 만에\n다시,\n역시',
+  66: '고민할 시간에\n예약,\n진심',
+  65: '일 맡기고\n나왔더니,\n집이 완성',
+  64: '"다음에 또\n어떻게 빼요?\n또 짐캐리"',
+  63: 'T 남편도\n"경험한 업체\n중 최고"',
+  62: '진짜 화남,\n너무\n완벽해서',
+  61: '인형 배치까지\n그대로,\n이사 전과\n똑같이',
+  58: '이사를 두 번\n했는데,\n두 번 다 만족',
+  57: '남편도\n"이사센터\n처음 봤다"',
+  56: '저희가 한\n거라고는\n차 안에\n있던 것뿐',
+  55: '책장 순서도\n그대로,\n강아지 종이도\n그대로',
+  52: '태풍 날,\n이불을\n아기 다루듯',
+  51: '콘센트 위치까지\n고민,\n내 집처럼',
+  49: '식당에서\n모르는 분이\n번호 물어봄',
+  48: '걱정 많은\n초보에게\n딱 맞는 이사',
+  46: '복붙 이사\n부탁,\n진짜로 해줌',
+  44: '한 시간 만에 끝,\n청소까지\n깜짝 도움',
+  40: '신혼가구 걱정,\n사장님 자부심\n하나로 끝',
+  39: '이사를 많이\n해본 저도,\n처음 느낀 감동',
+  38: '정리 이모님\n손이 닿자,\n새로 생긴\n공간',
+  33: '후기라 쓰고,\n감사 인사라\n읽음',
+  32: '10년, 6번\n이사한 사람이\n찾은 진짜',
+  29: '"고장나면\n제가 책임집니다"\n웃던 사장님',
+  27: '이사 3번,\n세 번 모두\n신뢰',
+  26: '조용하고\n우아한 이사,\n처음',
+  23: '배치도\n그려갔더니,\n알아서 착착',
+  16: '견적 본 사장님,\n이사날에도\n등판',
+  10: '4번 이사 중\n제일 편안',
+  7:  '비싼 곳도\n싼 곳도 실망,\n여기서 처음\n만족',
+  // ===== sub =====
+  83: '아기 데리고\n이사,\n대표님이\n다 리드',
+  81: '첫 번째도,\n두 번째도\n여기',
+  74: '냉장고도,\n어머니 집\n설치까지',
+  71: '꼼꼼한 1인이\n항목별로 적는\n이사 후기',
+  70: '4번째 호출,\n5번째도\n여기',
+  60: '엘리베이터 없고,\n나무 막혔는데도\n척척',
+  59: '집주인이\n월세로 돌린\n바람에,\n급하게',
+  54: '"1톤 트럭이면\n됩니다"\n사이다 같은\n한 마디',
+  53: '전쟁터 같은 집,\n웃으며\n척척',
+  50: '2시 반에 끝,\n4시인 줄',
+  47: '이사 끝나고\n대게 먹으러',
+  45: '가장 더운 날\n보관 이사,\n가구 손상\n제로',
+  43: '남편 없이 혼자\n보관 이사,\n걱정은 기우',
+  42: '까칠한 우리집\n남자도\n"2년 뒤에 또\n뵙겠다"',
+  36: '아버지의 극찬,\n"일 진짜\n잘한다"',
+  35: '파손 생겼지만,\n바로 보상',
+  34: '3개월 보관,\n먼지 없이\n멀쩡',
+  31: '책 많아\n기록 갱신,\n그래도 웃음',
+  30: '전남까지\n오셔서,\n최선',
+  28: '"제대로\n옮기시려나"\n했는데,\n커버까지',
+  25: '세탁기 연결\n실수 하나 빼면\n퍼펙트',
+  24: '용달차까지\n추가,\n조립까지',
+  22: '예전엔 파손까지,\n이번엔 매우\n만족',
+  21: '가구 다시\n옮겨달라,\n언짢은 티\n하나 없음',
+  19: '출근 차량\n틈에서,\n큰 어려움 없이',
+  15: '가구 다시\n옮겨달라,\n90점짜리 이사',
+  14: '사다리차 없이\n다섯 시간,\n즐거운 구경',
+  13: '군인 남편과\n이사 다녀본\n사람의 선택',
+  12: '까칠한 신랑도\n완전 만족',
+  11: '비 쫄딱 맞으며,\n고생 많으심',
+  9:  '이모님 냉장고\n청소,\n아직도 그대로',
+  8:  '나가자마자\n전화,\n귀찮은 기색\n없이',
+  6:  '나가자마자\n전화,\n바로 달려와\n해결',
+  4:  '장대비 속,\n짐에 천막 든\n팀',
+  3:  '책 칸 순서\n그대로,\n의자 느슨함까지',
+  1:  '아이 물건은\n이중 비닐 포장,\n그게 핵심'
+};
+
 function getKeyword(r) {
-  // 업그레이드된 후기 타이틀 사용
-  return r.newTitle || '';
+  // titleBreaks에 정의된 줄바꿈 버전이 있으면 사용, 없으면 원본 fallback
+  return titleBreaks[r.id] || r.newTitle || '';
 }
 
 // ============ 벤토 패턴 소스 ============
@@ -1328,7 +1436,12 @@ function render() {
 
   grid.innerHTML = filtered.map((r, i) => {
     const pattern = patternForThisFilter[i];
-    const keyword = esc(getKeyword(r));
+    // 제목을 줄 단위로 분할 → 각 줄을 .kw-line 스팬으로 감싸
+    // (JS fitCardTitles가 각 줄의 offsetWidth를 측정해 폰트를 카드 폭에 맞춤)
+    const keywordHtml = getKeyword(r)
+      .split('\n')
+      .map(line => `<span class="kw-line">${esc(line)}</span>`)
+      .join('');
     const subKeyword = esc(typeLabel[r.type] || r.type);
     const ariaLabel = esc((r.newTitle || '').replace(/\n/g,' ') + ' — 후기 자세히 보기');
 
@@ -1346,12 +1459,83 @@ function render() {
             <polyline points="8 7 17 7 17 16"/>
           </svg>
         </div>
-        <div class="cell-keyword">${keyword}</div>
+        <div class="cell-keyword">${keywordHtml}</div>
       </article>
     `;
   }).join('');
 
-  // (parallax 제거 — .settled 추가 불필요)
+  // 렌더 직후 카드 타이틀 사이즈 피팅 (가로/세로 제약에 맞춰 동적 폰트)
+  fitCardTitles();
+}
+
+// ============ 카드 타이틀 동적 폰트 사이징 ============
+// 원칙: 줄바꿈 구조는 HTML에 고정되어 있음. JS는 font-size만 조정.
+// 비유: 액자는 그대로, 그림만 액자에 맞게 확대/축소.
+//
+// 두 제약 조건:
+//   1) 가로: 가장 긴 줄의 offsetWidth ≤ 카드 content width
+//   2) 세로: 총 줄 높이(N × font × line-height) ≤ 사용 가능 세로 영역
+// 둘 중 더 엄격한(작은) 값을 최종 font-size로 채택.
+//
+// 측정 트릭: 초기 렌더 폰트(26px or 36px)에서의 실측값 → 비율 스케일.
+function fitCardTitles() {
+  const MAX_FS = 60;    // 상한 — 카드가 아주 커져도 과도하게 커지지 않게
+  const MIN_FS = 10;    // 하한 — 너무 작아져 가독성 잃지 않게
+  const LINE_HEIGHT = 1.18;  // CSS 값과 동일
+  // 16.67ms 이내면 동기 수행, 그 이상이면 frame 분할이 좋지만
+  // 카드 수 ~68장 수준이면 한 번에 처리해도 부담 없음.
+  document.querySelectorAll('.cell-keyword').forEach(kw => {
+    const lines = kw.querySelectorAll('.kw-line');
+    if (!lines.length) return;
+    const card = kw.parentElement;
+    if (!card) return;
+
+    // 1) 카드의 content width (padding 제외)
+    const cs = getComputedStyle(card);
+    const padL = parseFloat(cs.paddingLeft) || 0;
+    const padR = parseFloat(cs.paddingRight) || 0;
+    const padT = parseFloat(cs.paddingTop) || 0;
+    const padB = parseFloat(cs.paddingBottom) || 0;
+    const availW = card.clientWidth - padL - padR;
+
+    // 2) 세로 가용 영역 = 카드 높이 - padding - cell-top 높이 - 여유
+    const topEl = card.querySelector('.cell-top');
+    const topH = topEl ? topEl.offsetHeight : 0;
+    const topMB = topEl ? parseFloat(getComputedStyle(topEl).marginBottom) || 0 : 0;
+    const availH = card.clientHeight - padT - padB - topH - topMB;
+
+    if (availW <= 0 || availH <= 0) return;
+
+    // 현재 font-size로 실측 (렌더 시점의 CSS 값 — 모바일 26px, PC 36px)
+    const curFS = parseFloat(getComputedStyle(kw).fontSize) || 26;
+    let maxLineW = 0;
+    lines.forEach(ln => {
+      // 측정 전 letter-spacing 초기화는 불필요 (CSS 그대로 사용)
+      const w = ln.offsetWidth;
+      if (w > maxLineW) maxLineW = w;
+    });
+    if (maxLineW === 0) return;
+
+    // 가로 제약 기반 최적 FS
+    const fsByWidth = curFS * (availW / maxLineW);
+    // 세로 제약 기반 최적 FS
+    const fsByHeight = availH / (lines.length * LINE_HEIGHT);
+
+    let finalFS = Math.min(fsByWidth, fsByHeight);
+    finalFS = Math.max(MIN_FS, Math.min(finalFS, MAX_FS));
+
+    kw.style.fontSize = finalFS.toFixed(2) + 'px';
+  });
+}
+
+// 리사이즈/폰트로드 시 재피팅
+let _fitCardsTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_fitCardsTimer);
+  _fitCardsTimer = setTimeout(fitCardTitles, 80);
+});
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => fitCardTitles());
 }
 
 // ============ 언더라인 탭 — 인디케이터 이동 + 중앙 스크롤 ============

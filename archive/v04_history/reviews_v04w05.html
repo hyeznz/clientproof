@@ -176,24 +176,22 @@
   .main-title {
     font-family: var(--font-display-hero);
     font-weight: 700;
-    /* flex-column + align-items:flex-start
-       → 각 .mt-line 이 자기 텍스트의 "자연 폭"만큼만 차지하는 flex 아이템이 됨.
-         이게 핵심: 일반 block이면 짧은 텍스트도 부모 폭을 꽉 채워서
-         JS가 offsetWidth/scrollWidth로 실제 텍스트 폭을 측정 못 함.
-         flex-item with align-items:flex-start → 폭 = 콘텐츠 폭 → 측정 정확. */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    /* 3줄 카피를 "무조건 3줄"로 유지하기 위한 핵심 세팅
+       - 각 줄은 .mt-line 스팬으로 감싸 white-space: nowrap 처리
+       - 폰트 크기는 가장 긴 줄(제대로 캐리하는 이사'는)이 화면 폭에 들어오도록
+         vw 비례로 계산 → 화면이 좁아지면 폰트도 같이 작아져 항상 한 줄 유지 */
     font-size: clamp(22px, 8.6vw, 66px);
     line-height: 1.08;
     letter-spacing: -0.03em;     /* 점프체는 각진 서체라 트래킹 살짝 완화 */
     color: var(--black);
     max-width: 100%;
   }
-  /* 각 줄 — flex 아이템으로 자기 콘텐츠 폭만큼만 차지.
-     line-height 1.0 = 타이트 빡빡, 1.3~1.5 = 본문 스타일.
-     디스플레이 타이틀은 1.12~1.18이 숨통 트이면서 답답하지 않은 스위트스팟. */
+  /* 각 줄 컨테이너 — 블록으로 쌓되, 내부에서는 절대 줄바꿈 금지
+     line-height 1.0 = 타이트한 빡빡함, 1.3~1.5 = 본문 스타일.
+     디스플레이 타이틀은 1.12~1.18이 숨통 트이면서 답답하지 않은 스위트스팟.
+     또한 어센더가 부모에 잘리지 않도록 1.0 이상이어야 안전. */
   .main-title .mt-line {
+    display: block;
     white-space: nowrap;
     line-height: 1.15;
   }
@@ -223,11 +221,10 @@
     margin-bottom: 10px;
   }
   .banner-body {
-    font-size: 14.5px;
+    font-size: 13px;
     font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1.7;
-    text-align: center;        /* 중앙 정렬 */
   }
   .banner-body strong {
     font-weight: 800;
@@ -241,7 +238,7 @@
       margin-bottom: 12px;
     }
     .banner-body {
-      font-size: 16px;
+      font-size: 14.5px;
       line-height: 1.7;
     }
   }
@@ -819,10 +816,7 @@
 <div class="banner">
   <div class="banner-inner">
     <div class="banner-body">
-      아래의 후기들은 <strong>실제 이사를 마친 고객님들께서 직접 남긴 이야기</strong>입니다.<br>
-      칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다.<br>
-      그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다.<br>
-      다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유, <strong>직접 경험해보세요.</strong>
+      <strong>실제 이사를 마친 고객분들이 직접 남긴 이야기</strong>입니다. 칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다. 그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다. 다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유, <strong>직접 경험해보세요.</strong>
     </div>
   </div>
 </div>
@@ -904,22 +898,19 @@
   const lines = Array.from(h1.querySelectorAll('.mt-line'));
   if (!lines.length) return;
 
-  const MAX_SIZE_RATIO = 2.15;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
-                                // 1.8 → 2.15 상향: 자간 ~50% 축소, 폰트 ~19% 확대
+  const MAX_SIZE_RATIO = 1.8;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
 
   const fit = () => {
     const targetWidth = bannerInner.clientWidth;
     if (!targetWidth) return;
 
-    // 1단계: 모든 줄 100px 기준 자연 너비 측정
-    // offsetWidth 사용 (scrollWidth는 block 요소에서 container 폭 반환하는 함정 있음;
-    //  .main-title가 flex-column + align-items:flex-start라 offsetWidth = 콘텐츠 폭)
+    // 1단계: 모든 줄 100px 기준 자연 너비 측정 (letter-spacing 초기화 필수)
     const measures = lines.map(line => {
       line.style.letterSpacing = '';   // CSS 기본값(-0.03em)으로 리셋
       line.style.fontSize = '100px';
       return {
         line,
-        naturalWidth: line.offsetWidth,
+        naturalWidth: line.scrollWidth,
         charCount: (line.textContent || '').length
       };
     });
@@ -938,15 +929,18 @@
 
       // 캡에 걸려 폰트만으로 못 채운 줄은 자간으로 나머지 채움
       if (actualFS < idealFS - 0.5 && m.charCount > 1) {
-        // 반복 피팅: 실측 → 차이만큼 자간 보정 → 다시 실측, 최대 5회
-        // 보통 2회 안에 수렴 (첫 추정 + 한 번의 미세 보정)
-        let ls = 0;
+        // 렌더된 실제 너비 기반 반복 피팅 (1차)
         m.line.style.letterSpacing = '0px';
-        for (let i = 0; i < 5; i++) {
-          const currentWidth = m.line.offsetWidth;
-          const diff = targetWidth - currentWidth;
-          if (Math.abs(diff) < 0.5) break;  // 서브픽셀 수준이면 종료
-          ls += diff / m.charCount;
+        let renderedWidth = m.line.scrollWidth;
+        let gap = targetWidth - renderedWidth;
+        let ls = gap / m.charCount;
+        m.line.style.letterSpacing = ls.toFixed(3) + 'px';
+
+        // 2차 보정: 렌더 결과가 여전히 1px 이상 차이나면 재조정
+        renderedWidth = m.line.scrollWidth;
+        const residual = targetWidth - renderedWidth;
+        if (Math.abs(residual) > 1) {
+          ls += residual / m.charCount;
           m.line.style.letterSpacing = ls.toFixed(3) + 'px';
         }
       }

@@ -166,36 +166,30 @@
   /* ============ 거대 타이틀 블록 ============ */
   .title-block {
     max-width: 1280px;
-    /* 상단 여유 패딩 — 헤더 제거에 따른 시각적 여백 확보
-       + 큰 Korean 글리프의 위쪽 어센더가 잘리지 않도록 상단 버퍼 */
-    margin: 20px auto 0;
+    margin: 4px auto 0;
     padding: 0 var(--edge) 4px;
-    /* overflow 규칙 제거: JS 피팅이 정확하므로 안전장치 불필요.
-       overflow:hidden이 있으면 큰 글자의 윗부분(어센더)이 잘려 나감. */
+    overflow: hidden;   /* nowrap 오버플로 시 가로 스크롤 방지용 안전장치 */
   }
   .main-title {
     font-family: var(--font-display-hero);
     font-weight: 700;
-    /* flex-column + align-items:flex-start
-       → 각 .mt-line 이 자기 텍스트의 "자연 폭"만큼만 차지하는 flex 아이템이 됨.
-         이게 핵심: 일반 block이면 짧은 텍스트도 부모 폭을 꽉 채워서
-         JS가 offsetWidth/scrollWidth로 실제 텍스트 폭을 측정 못 함.
-         flex-item with align-items:flex-start → 폭 = 콘텐츠 폭 → 측정 정확. */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    /* 3줄 카피를 "무조건 3줄"로 유지하기 위한 핵심 세팅
+       - 각 줄은 .mt-line 스팬으로 감싸 white-space: nowrap 처리
+       - 폰트 크기는 가장 긴 줄(제대로 캐리하는 이사'는)이 화면 폭에 들어오도록
+         vw 비례로 계산 → 화면이 좁아지면 폰트도 같이 작아져 항상 한 줄 유지 */
     font-size: clamp(22px, 8.6vw, 66px);
     line-height: 1.08;
     letter-spacing: -0.03em;     /* 점프체는 각진 서체라 트래킹 살짝 완화 */
     color: var(--black);
     max-width: 100%;
   }
-  /* 각 줄 — flex 아이템으로 자기 콘텐츠 폭만큼만 차지.
-     line-height 1.0 = 타이트 빡빡, 1.3~1.5 = 본문 스타일.
-     디스플레이 타이틀은 1.12~1.18이 숨통 트이면서 답답하지 않은 스위트스팟. */
+  /* 각 줄 컨테이너 — 블록으로 쌓되, 내부에서는 절대 줄바꿈 금지
+     JS가 줄마다 다른 font-size를 주입하므로 line-height를 타이트하게 잡아
+     짧은 줄("흔치 않아요")의 폰트가 커져도 과도한 상하 여백이 생기지 않게 함 */
   .main-title .mt-line {
+    display: block;
     white-space: nowrap;
-    line-height: 1.15;
+    line-height: 0.96;
   }
   /* 메인 타이틀 속 따옴표 강조 키워드 — 오렌지 포인트로 시선 유도 */
   .main-title .mt-hi {
@@ -223,11 +217,10 @@
     margin-bottom: 10px;
   }
   .banner-body {
-    font-size: 14.5px;
+    font-size: 13px;
     font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1.7;
-    text-align: center;        /* 중앙 정렬 */
   }
   .banner-body strong {
     font-weight: 800;
@@ -241,7 +234,7 @@
       margin-bottom: 12px;
     }
     .banner-body {
-      font-size: 16px;
+      font-size: 14.5px;
       line-height: 1.7;
     }
   }
@@ -810,19 +803,21 @@
   <div class="topline"></div>
 </div>
 
+<!-- ========== 헤더 ========== -->
+<header class="header">
+  <div class="header-logo">강</div>
+</header>
+
 <!-- ========== 거대 타이틀 ========== -->
 <div class="title-block">
-  <h1 class="main-title"><span class="mt-line">&lsquo;싸게 하는 이사&rsquo;는 많아도,</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 이사&rsquo;</span>는</span><span class="mt-line">흔치 않아요</span></h1>
+  <h1 class="main-title"><span class="mt-line"><span class="mt-hi">&lsquo;싸게 하는 이사&rsquo;</span>는 많아도,</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 이사&rsquo;</span>는</span><span class="mt-line">흔치 않아요</span></h1>
 </div>
 
 <!-- ========== 오렌지 배너 (후기 진정성 안내) ========== -->
 <div class="banner">
   <div class="banner-inner">
     <div class="banner-body">
-      아래의 후기들은 <strong>실제 이사를 마친 고객님들께서 직접 남긴 이야기</strong>입니다.<br>
-      칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다.<br>
-      그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다.<br>
-      다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유, <strong>직접 경험해보세요.</strong>
+      <strong>실제 이사를 마친 고객분들이 직접 남긴 이야기</strong>입니다. 칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다. 그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다. 다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유, <strong>직접 경험해보세요.</strong>
     </div>
   </div>
 </div>
@@ -878,90 +873,46 @@
 </aside>
 
 <script>
-// ============ 메인 타이틀 3줄 blockFit (Photoshop "Justify All" 방식) ============
-// 개념: 모든 줄을 동일 가로폭(배너 폭)에 정렬하되,
-//       짧은 줄이 혼자 비대해지지 않도록 "폰트 크기 확대 + 자간 확장"을 혼합.
-//       = Photoshop의 "Dynamic Text blockFit" / InDesign의 "Full Justification" 과 동일 원리.
-//
-// 알고리즘:
-//   1) 모든 줄을 100px 기준으로 측정 → 각 줄의 자연 너비 W_i 획득
-//   2) 가장 긴 줄(W_max)을 기준으로 표준 폰트 크기 baseFS 계산
-//      baseFS = targetWidth / W_max × 100
-//      → 이 줄은 자간 0으로도 폭이 딱 맞음
-//   3) 짧은 줄은 이상적 풀스케일 폰트를 계산 (idealFS)하되,
-//      MAX_SIZE_RATIO 배까지만 확대 → 과도한 단독 거대화 방지
-//   4) 캡에 걸려 부족한 가로폭은 letter-spacing(자간)으로 균등 분배
-//      → 실측 기반 반복 피팅으로 서브픽셀 오차까지 제거
-//
-// MAX_SIZE_RATIO 튜닝 가이드:
-//   1.0 = 모든 줄 동일 크기(자간만 사용) — 짧은 줄이 왜소해 보임
-//   1.8 = 현재값. 짧은 줄 살짝 크고 자간 여유 있는 자연스러운 밸런스
-//   2.5 = 거의 폰트 크기만으로 맞춤 — 짧은 줄이 압도적
+// ============ 메인 타이틀 3줄 가로폭 자동 피팅 ============
+// 비유: 각 줄을 "종이 띠"라 치고, 띠 폭은 그대로(글자 비율 유지)인데
+//       확대/축소해서 가방 폭(배너 가로폭)에 딱 맞춰 끼우는 방식.
+// 원리: 각 .mt-line의 자연 너비를 100px 기준으로 측정한 뒤
+//       (배너 가로폭 / 자연 너비) × 100 = 그 줄의 최적 font-size.
+//       → 줄마다 글자 수가 달라도 모두 동일한 가로폭으로 정렬됨.
+// 배너와 타이틀의 가로폭 기준은 동일한 --edge 패딩을 쓰므로
+// .banner-inner의 실제 렌더 폭을 그대로 기준값으로 사용.
 (function fitMainTitle(){
   const h1 = document.querySelector('.main-title');
   const bannerInner = document.querySelector('.banner-inner');
   if (!h1 || !bannerInner) return;
-  const lines = Array.from(h1.querySelectorAll('.mt-line'));
+  const lines = h1.querySelectorAll('.mt-line');
   if (!lines.length) return;
 
-  const MAX_SIZE_RATIO = 2.15;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
-                                // 1.8 → 2.15 상향: 자간 ~50% 축소, 폰트 ~19% 확대
-
   const fit = () => {
+    // 기준 폭 = 오렌지 배너박스의 실제 렌더 폭
     const targetWidth = bannerInner.clientWidth;
     if (!targetWidth) return;
-
-    // 1단계: 모든 줄 100px 기준 자연 너비 측정
-    // offsetWidth 사용 (scrollWidth는 block 요소에서 container 폭 반환하는 함정 있음;
-    //  .main-title가 flex-column + align-items:flex-start라 offsetWidth = 콘텐츠 폭)
-    const measures = lines.map(line => {
-      line.style.letterSpacing = '';   // CSS 기본값(-0.03em)으로 리셋
+    lines.forEach(line => {
+      // 측정 편의를 위해 잠시 100px로 세팅 → 자연 너비 측정
       line.style.fontSize = '100px';
-      return {
-        line,
-        naturalWidth: line.offsetWidth,
-        charCount: (line.textContent || '').length
-      };
-    });
-
-    // 2단계: 가장 긴 줄 → 기준 폰트 크기
-    const baseFS = Math.min(
-      ...measures.map(m => targetWidth / m.naturalWidth * 100)
-    );
-    const maxFS = baseFS * MAX_SIZE_RATIO;
-
-    // 3단계: 줄마다 폰트 크기 + 자간 결정
-    measures.forEach(m => {
-      const idealFS = targetWidth / m.naturalWidth * 100;  // 자간 없이 폰트만으로 맞출 때
-      const actualFS = Math.min(idealFS, maxFS);            // 캡 적용
-      m.line.style.fontSize = actualFS.toFixed(2) + 'px';
-
-      // 캡에 걸려 폰트만으로 못 채운 줄은 자간으로 나머지 채움
-      if (actualFS < idealFS - 0.5 && m.charCount > 1) {
-        // 반복 피팅: 실측 → 차이만큼 자간 보정 → 다시 실측, 최대 5회
-        // 보통 2회 안에 수렴 (첫 추정 + 한 번의 미세 보정)
-        let ls = 0;
-        m.line.style.letterSpacing = '0px';
-        for (let i = 0; i < 5; i++) {
-          const currentWidth = m.line.offsetWidth;
-          const diff = targetWidth - currentWidth;
-          if (Math.abs(diff) < 0.5) break;  // 서브픽셀 수준이면 종료
-          ls += diff / m.charCount;
-          m.line.style.letterSpacing = ls.toFixed(3) + 'px';
-        }
-      }
+      const naturalWidth = line.scrollWidth;
+      if (naturalWidth === 0) return;
+      // 비례식으로 목표 폰트 크기 계산 (소수점 2자리까지)
+      const targetSize = Math.floor((targetWidth / naturalWidth) * 100 * 100) / 100;
+      line.style.fontSize = targetSize + 'px';
     });
   };
 
   // 초기 실행
   fit();
-  // 리사이즈 debounce
+  // 리사이즈 시 재계산 (연속 호출 방지 debounce)
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(fit, 80);
   });
-  // 커스텀 폰트 로드 후 재측정 (폰트 메트릭 변동 반영)
+  // 커스텀 폰트(KBLJumpCondensed) 로드 완료 후 재측정
+  // → 폰트 바뀌면 글자 폭이 달라지므로 반드시 다시 맞춰야 함
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(fit);
   }

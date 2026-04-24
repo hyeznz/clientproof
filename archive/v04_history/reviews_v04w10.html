@@ -197,6 +197,16 @@
     white-space: nowrap;
     line-height: 1.15;
   }
+  /* 짧은 줄 전용 미세 조정 (예: "흔치 않아요")
+     - word-spacing 음수: letter-spacing 확장 시 단어 사이(공백) 간격이
+       char-to-char 간격의 4~5배로 과도해지는 것을 시각적으로 상쇄
+     - padding-left: 다른 줄의 따옴표 side-bearing 때문에 생기는
+       시각적 들여쓰기에 맞추어 첫 글자를 살짝 오른쪽으로 정렬
+     - padding은 em 기반이라 폰트 크기에 비례해 자동 스케일 */
+  .main-title .mt-line--tight {
+    word-spacing: -0.1em;
+    padding-left: 0.04em;
+  }
   /* 메인 타이틀 속 따옴표 강조 키워드 — 오렌지 포인트로 시선 유도 */
   .main-title .mt-hi {
     color: var(--orange);
@@ -812,7 +822,7 @@
 
 <!-- ========== 거대 타이틀 ========== -->
 <div class="title-block">
-  <h1 class="main-title"><span class="mt-line">&lsquo;싸게 하는 이사&rsquo;는 많아도,</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 이사&rsquo;</span>는</span><span class="mt-line">흔치 않아요</span></h1>
+  <h1 class="main-title"><span class="mt-line">&lsquo;싸게하는 곳&rsquo;은 많아도</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 곳&rsquo;</span>은</span><span class="mt-line mt-line--tight">흔치 않아요</span></h1>
 </div>
 
 <!-- ========== 오렌지 배너 (후기 진정성 안내) ========== -->
@@ -904,8 +914,10 @@
   const lines = Array.from(h1.querySelectorAll('.mt-line'));
   if (!lines.length) return;
 
-  const MAX_SIZE_RATIO = 2.15;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
-                                // 1.8 → 2.15 상향: 자간 ~50% 축소, 폰트 ~19% 확대
+  const MAX_SIZE_RATIO = 1.8;   // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
+                                // 텍스트 짧아져 line1/line3 자연폭 비율이 2.4→2.0으로 감소.
+                                // 2.15로 두면 캡이 안 걸려 letter-spacing=0이 되어 blockFit 효과 상실.
+                                // 1.8로 낮춰 ~10% letter-spacing 분배 보존.
 
   const fit = () => {
     const targetWidth = bannerInner.clientWidth;
