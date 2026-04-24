@@ -75,7 +75,11 @@
     --row-unit: 40px;
     --gap: 8px;
     --radius: 14px;      /* 카드 모서리 둥글게 */
-    --pad: 18px;         /* 카드 내부 여백 */
+    /* 카드 내부 여백 — 뷰포트 비례 축소.
+       - ≥375px(일반 모바일): 18px
+       - 좁은 화면: 5vw 비례 (예: 280→14, 240→12, 200→10)
+       - 하한 9px: 너무 빽빽해지지 않게 */
+    --pad: clamp(9px, 4.8vw, 18px);
     /* 화면 좌우 공통 패딩 — safe-area-inset(아이폰 노치) 포함 */
     --edge: calc(16px + env(safe-area-inset-left));
 
@@ -196,6 +200,16 @@
   .main-title .mt-line {
     white-space: nowrap;
     line-height: 1.15;
+  }
+  /* 짧은 줄 전용 미세 조정 (예: "흔치 않아요")
+     - word-spacing 음수: letter-spacing 확장 시 단어 사이(공백) 간격이
+       char-to-char 간격의 4~5배로 과도해지는 것을 시각적으로 상쇄
+     - padding-left: 다른 줄의 따옴표 side-bearing 때문에 생기는
+       시각적 들여쓰기에 맞추어 첫 글자를 살짝 오른쪽으로 정렬
+     - padding은 em 기반이라 폰트 크기에 비례해 자동 스케일 */
+  .main-title .mt-line--tight {
+    word-spacing: -0.1em;
+    padding-left: 0.04em;
   }
   /* 메인 타이틀 속 따옴표 강조 키워드 — 오렌지 포인트로 시선 유도 */
   .main-title .mt-hi {
@@ -408,6 +422,11 @@
     background: var(--black);
     color: var(--orange);
   }
+  /* v-blue: 체크용 마커 — 다른 탭에도 중복 노출되는 후기 표시 */
+  .cell.v-blue {
+    background: #2563eb;
+    color: #ffffff;
+  }
 
   /* ===== 카드 내부: 레퍼런스 구조대로 요소 3개만 ===== */
   /* 상단 영역: 좌측 작은 키워드 + 우측 화살표 */
@@ -441,20 +460,40 @@
   }
   .cell:hover .cell-arrow { opacity: 1; transform: translate(1px, -1px); }
 
-  /* 좌하단 메인 키워드 — 카드 크기와 무관하게 동일 크기로 통일 */
-  /* 기준: "인생 최악의 이사, 여기서 끝" × 1.5배 */
+  /* 좌하단 메인 키워드 — [깨지면 안 되는 공식들]
+     ① 모든 탭의 모든 카드 FS 동일 (전역 단일 값)
+     ② 좁은 화면에서 잘리지 않음 (제약 걸리면 FS가 그만큼 작아짐)
+     ③ 카드 내 좌측 하단 정렬 (margin-top:auto + align-items:flex-start)
+     ④ 긴 제목 후기는 render 단계에서 m+ 카드에 재배정 → 전역 FS를 refFS에 근접하게 유지
+     - 각 줄(.kw-line)은 nowrap 블록으로 자기 콘텐츠 폭만큼만 차지
+     - flex-column + align-items:flex-start: JS가 offsetWidth로 실제 폭 측정 가능 */
   .cell-keyword {
     font-family: var(--font-display-card);
     font-weight: 700;
-    font-size: 26px;
-    line-height: 1.2;
+    /* v04w10의 26px 를 상한으로, 뷰포트가 좁아지면 자동 축소 (clamp)
+       - 일반 모바일(≥383px): 26px 유지 (v04w10 감성 그대로)
+       - 좁은 뷰포트 (320/280/250): 6.8vw 비례로 축소 → 카드 잘림 방지
+       - 하한 14px: 아무리 좁아도 가독성 최소선 유지 */
+    font-size: clamp(14px, 6.8vw, 26px);
+    line-height: 1.2;            /* v04w10 값과 동일 */
     letter-spacing: -0.03em;     /* 점프체는 각진 서체 — 기존 -0.055em은 과도, 완화 */
     text-align: left;
-    white-space: normal;         /* 자연스러운 wrap */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;     /* 공식 ③: 좌측 정렬 */
+    margin-top: auto;            /* 공식 ③: 하단으로 밀기 */
+    /* fallback: JS가 동작 실패해도 최소한 줄바꿈은 유지 */
     word-break: keep-all;
     overflow-wrap: break-word;
-    hyphens: none;
-    margin-top: auto;            /* 하단으로 밀기 */
+  }
+  .cell-keyword .kw-line {
+    display: block;
+    /* nowrap 제거 → titleBreaks의 줄바꿈은 "권장 기본 레이아웃"으로 두되,
+       특정 줄이 카드 폭을 넘으면 자연스럽게 2차 wrap 발생 → 가로 잘림 방지.
+       FS는 유지되고 줄바꿈만 유동적으로 늘어남. */
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   /* ============ 하단 룰 라인 ============ */
@@ -812,7 +851,7 @@
 
 <!-- ========== 거대 타이틀 ========== -->
 <div class="title-block">
-  <h1 class="main-title"><span class="mt-line">&lsquo;싸게 하는 이사&rsquo;는 많아도,</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 이사&rsquo;</span>는</span><span class="mt-line">흔치 않아요</span></h1>
+  <h1 class="main-title"><span class="mt-line">&lsquo;싸게하는 곳&rsquo;은 많아도</span><span class="mt-line"><span class="mt-hi">&lsquo;제대로 캐리하는 곳&rsquo;</span>은</span><span class="mt-line mt-line--tight">흔치 않아요</span></h1>
 </div>
 
 <!-- ========== 오렌지 배너 (후기 진정성 안내) ========== -->
@@ -904,8 +943,10 @@
   const lines = Array.from(h1.querySelectorAll('.mt-line'));
   if (!lines.length) return;
 
-  const MAX_SIZE_RATIO = 2.15;  // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
-                                // 1.8 → 2.15 상향: 자간 ~50% 축소, 폰트 ~19% 확대
+  const MAX_SIZE_RATIO = 1.8;   // 짧은 줄 폰트 크기 상한 (기준 폰트 대비)
+                                // 텍스트 짧아져 line1/line3 자연폭 비율이 2.4→2.0으로 감소.
+                                // 2.15로 두면 캡이 안 걸려 letter-spacing=0이 되어 blockFit 효과 상실.
+                                // 1.8로 낮춰 ~10% letter-spacing 분배 보존.
 
   const fit = () => {
     const targetWidth = bannerInner.clientWidth;
@@ -1150,9 +1191,96 @@ const typeLabel = {
 // 메인태그 순서 (그룹핑용)
 const mainTagOrder = ['실력의차이', '가격', '친절응대', '정리정돈', '고난도돌파', '책임감', '유형별이사', '속전속결', '재이사맛집'];
 
+// ============ 카드 제목 고정 줄바꿈 매핑 ============
+// ID별로 미리 정한 줄바꿈을 적용 (화면 비율 바뀌어도 줄 구조 유지).
+// 폰트 크기는 JS fitCardTitles()가 카드별로 동적 계산.
+// 의미 단위(쉼표/구절) 기준으로 2~4줄로 분할.
+const titleBreaks = {
+  // ===== best =====
+  85: '인생 최악의\n이사,\n여기서 끝',
+  84: '이삿짐 편견,\n단번에\n박살냄',
+  82: '저희 부부는\n멀뚱멀뚱\n구경만',
+  80: '비 오는 날?\n젖은 짐\n제로!',
+  79: '진정한\n이사계의\n해결사 등판',
+  78: '동생도 찐\n감탄한\n포장이사',
+  77: '머리 하얘진\n짐,\n알아서 착착',
+  76: '13평 축소\n이사도\n문제없음',
+  75: '20년 묵은\n짐도\n완벽 클리어',
+  73: '20년 만의\n이사,\n역시 전문가',
+  72: '냉장고\nAS까지,\n한 시간\n달려옴',
+  69: '땀이\n비 온 줄',
+  68: '악조건 이사,\n인상 한 번\n없음',
+  67: '4년 만에\n다시,\n역시',
+  66: '고민할 시간에\n예약,\n진심',
+  65: '일 맡기고\n나왔더니,\n집이 완성',
+  64: '"다음에 또\n어떻게 빼요?\n또 짐캐리"',
+  63: 'T 남편도\n"경험한 업체\n중 최고"',
+  62: '진짜 화남,\n너무\n완벽해서',
+  61: '인형 배치까지\n그대로,\n이사 전과\n똑같이',
+  58: '이사를 두 번\n했는데,\n두 번 다\n만족',
+  57: '남편도\n"이사센터\n처음 봤다"',
+  56: '저희가 한\n거라고는\n차 안에\n있던 것뿐',
+  55: '책장 순서도\n그대로,\n강아지 종이도\n그대로',
+  52: '태풍 날,\n이불을\n아기 다루듯',
+  51: '콘센트\n위치까지\n고민,\n내 집처럼',
+  49: '식당에서\n모르는 분이\n번호 물어봄',
+  48: '걱정 많은\n초보에게\n딱 맞는 이사',
+  46: '복붙 이사\n부탁,\n진짜로 해줌',
+  44: '한 시간 만에\n끝, 청소까지\n깜짝 도움',
+  40: '신혼가구 걱정,\n사장님 자부심\n하나로 끝',
+  39: '이사를 많이\n해본 저도,\n처음 느낀\n감동',
+  38: '정리 이모님\n손이 닿자,\n새로 생긴\n공간',
+  33: '후기라 쓰고,\n감사 인사라\n읽음',
+  32: '10년, 6번\n이사한 사람이\n찾은 진짜',
+  29: '"고장나면\n제가 책임집니다"\n웃던 사장님',
+  27: '이사 3번,\n세 번 모두\n신뢰',
+  26: '조용하고\n우아한 이사,\n처음',
+  23: '배치도\n그려갔더니,\n알아서 착착',
+  16: '견적 본\n사장님,\n이사날에도\n등판',
+  10: '4번 이사 중\n제일 편안',
+  7:  '비싼 곳도\n싼 곳도 실망,\n여기서 처음\n만족',
+  // ===== sub =====
+  83: '아기 데리고\n이사,\n대표님이\n다 리드',
+  81: '첫 번째도,\n두 번째도\n여기',
+  74: '냉장고도,\n어머니 집\n설치까지',
+  71: '꼼꼼한 1인이\n항목별로 적는\n이사 후기',
+  70: '4번째 호출,\n5번째도\n여기',
+  60: '엘리베이터\n없고, 나무\n막혔는데도\n척척',
+  59: '집주인이\n월세로 돌린\n바람에,\n급하게',
+  54: '"1톤 트럭이면\n됩니다"\n사이다 같은\n한 마디',
+  53: '전쟁터 같은 집,\n웃으며\n척척',
+  50: '2시 반에 끝,\n4시인 줄',
+  47: '이사 끝나고\n대게 먹으러',
+  45: '가장 더운 날\n보관 이사,\n손상 제로',
+  43: '남편 없이 혼자\n보관 이사,\n걱정은 기우',
+  42: '까칠한 우리집\n남자도\n"2년 뒤에 또\n뵙겠다"',
+  36: '아버지의 극찬,\n"일 진짜\n잘한다"',
+  35: '파손 생겼지만,\n바로 보상',
+  34: '3개월 보관,\n먼지 없이\n멀쩡',
+  31: '책 많아\n기록 갱신,\n그래도 웃음',
+  30: '전남까지\n오셔서,\n최선',
+  28: '"제대로\n옮기시려나"\n했는데,\n커버까지',
+  25: '세탁기 연결\n실수 하나 빼면\n퍼펙트',
+  24: '용달차까지\n추가,\n조립까지',
+  22: '예전엔 파손까지,\n이번엔 매우\n만족',
+  21: '가구 다시\n옮겨달라,\n언짢은 티\n하나 없음',
+  19: '출근 차량\n틈에서,\n큰 어려움 없이',
+  15: '가구 다시\n옮겨달라,\n90점짜리 이사',
+  14: '사다리차 없이\n다섯 시간,\n즐거운 구경',
+  13: '군인 남편과\n이사 다녀본\n사람의 선택',
+  12: '까칠한 신랑도\n완전 만족',
+  11: '비 쫄딱 맞으며,\n고생 많으심',
+  9:  '이모님 냉장고\n청소,\n아직도 그대로',
+  8:  '나가자마자\n전화,\n귀찮은 기색\n없이',
+  6:  '나가자마자\n전화,\n바로 달려와\n해결',
+  4:  '장대비 속,\n짐에 천막 든\n팀',
+  3:  '책 칸 순서\n그대로,\n의자 느슨함까지',
+  1:  '아이 물건은\n이중 비닐 포장,\n그게 핵심'
+};
+
 function getKeyword(r) {
-  // 업그레이드된 후기 타이틀 사용
-  return r.newTitle || '';
+  // titleBreaks에 정의된 줄바꿈 버전이 있으면 사용, 없으면 원본 fallback
+  return titleBreaks[r.id] || r.newTitle || '';
 }
 
 // ============ 벤토 패턴 소스 ============
@@ -1244,18 +1372,88 @@ function seededShuffle(arr, rng) {
 // ========================================================================
 const HEIGHT_ORDER = { xs: 3, s: 4, m: 5, l: 7, xl: 9 };
 
+// Bento 컬러/사이즈 배치 scoring — 페널티가 작을수록 예쁨.
+// 수학적 기반:
+//   ① Blue-noise / Poisson-disc: 같은 컬러 가까우면 벌점 → 균등 분산 유도
+//   ② Ergodic sampling: 구간별 컬러 빈도를 전체 빈도에 맞춤
+//   ③ Spacing uniformity: 강조색 간 간격의 표준편차 최소화
+//   ④ 2D grid 근사: 짝수/홀수 인덱스 = 좌/우 컬럼 근사 → 세로 인접 제어
+//   ⑤ Height rhythm: 큰 카드(l/xl) 연속 배치 피함
+//   ⑥ Above-the-fold: orange(포인트컬러)가 첫 4장 안에 반드시 노출
 function scoreArrangement(arr) {
   let penalty = 0;
-  // 좌우 쌍 (짝수 인덱스 i와 i+1): 높이 같으면 +10
-  for (let i = 0; i + 1 < arr.length; i += 2) {
-    if (arr[i].h === arr[i + 1].h) penalty += 10;
+  const n = arr.length;
+  if (!n) return 0;
+
+  // ─── A. 같은 non-light 컬러의 근접 클러스터링 (Blue noise 핵심) ───
+  // 거리별로 가중치: 바로 옆이면 제일 나쁨, 멀수록 덜함.
+  for (let i = 1; i < n; i++) {
+    if (arr[i].v !== 'light' && arr[i-1].v === arr[i].v) penalty += 80;
   }
-  // 연속 강조색 중복 (non-light 가 두 번 연속): +3
-  for (let i = 1; i < arr.length; i++) {
-    const prevAccent = arr[i - 1].v !== 'light';
-    const currAccent = arr[i].v !== 'light';
-    if (prevAccent && currAccent && arr[i - 1].v === arr[i].v) penalty += 3;
+  for (let i = 2; i < n; i++) {
+    if (arr[i].v !== 'light' && arr[i-2].v === arr[i].v) penalty += 35;
   }
+  for (let i = 3; i < n; i++) {
+    if (arr[i].v !== 'light' && arr[i-3].v === arr[i].v) penalty += 12;
+  }
+  for (let i = 4; i < n; i++) {
+    if (arr[i].v !== 'light' && arr[i-4].v === arr[i].v) penalty += 4;
+  }
+
+  // ─── B. 좌우 쌍(짝수 i, i+1) 높이 동일 → 시각적 블록감 ───
+  for (let i = 0; i + 1 < n; i += 2) {
+    if (arr[i].h === arr[i + 1].h) penalty += 8;
+  }
+
+  // ─── C. 큰 카드(l/xl) 연속 = 임팩트 집중 → 분산 유도 ───
+  for (let i = 1; i < n; i++) {
+    const aBig = arr[i-1].h === 'l' || arr[i-1].h === 'xl';
+    const bBig = arr[i].h === 'l' || arr[i].h === 'xl';
+    if (aBig && bBig) penalty += 18;
+  }
+
+  // ─── D. light 4+ 연속 → 단조로움 (약한 페널티) ───
+  let lightRun = 0;
+  for (let i = 0; i < n; i++) {
+    if (arr[i].v === 'light') {
+      lightRun++;
+      if (lightRun >= 4) penalty += 3;
+    } else lightRun = 0;
+  }
+
+  // ─── E. 강조색 간격 표준편차 (Spacing uniformity) ───
+  // 이상적: 모든 강조색이 구간 내 균등 분산. 편차가 크면 벌점.
+  const accents = [];
+  for (let i = 0; i < n; i++) {
+    if (arr[i].v !== 'light') accents.push(i);
+  }
+  if (accents.length >= 2) {
+    const gaps = [accents[0] + 1];
+    for (let i = 1; i < accents.length; i++) {
+      gaps.push(accents[i] - accents[i-1]);
+    }
+    gaps.push(n - accents[accents.length - 1]);
+    const mean = gaps.reduce((a, b) => a + b, 0) / gaps.length;
+    let variance = 0;
+    for (const g of gaps) variance += (g - mean) ** 2;
+    penalty += Math.round(Math.sqrt(variance / gaps.length) * 3);
+  }
+
+  // ─── F. 짝수/홀수 인덱스(좌/우 컬럼 근사) 강조색 균형 ───
+  const evenAccents = accents.filter(i => i % 2 === 0).length;
+  const oddAccents = accents.length - evenAccents;
+  penalty += Math.abs(evenAccents - oddAccents) * 4;
+
+  // ─── G. Orange(포인트컬러) above-the-fold 노출 ───
+  // 모바일 첫 화면에 orange 가 보이도록 — 첫 4장 안에 최소 1개 포함.
+  // 없거나 뒤쪽에 있으면 강한 페널티 → 맨 앞쪽으로 끌어당김.
+  const firstOrange = arr.findIndex(p => p.v === 'orange');
+  if (firstOrange === -1) {
+    penalty += 200;  // pool에 orange 없는 경우 (안전장치)
+  } else if (firstOrange > 3) {
+    penalty += (firstOrange - 3) * 30;  // 4장 초과부터 비례 벌점
+  }
+
   return penalty;
 }
 
@@ -1269,10 +1467,12 @@ function getPatternForFilter(filterName, count) {
   const hasher = hashSeed(filterName);
   const rng = mulberry32(hasher());
 
-  // 시드 기반 셔플을 여러 번 시도해서 가장 낮은 페널티의 배열 선택
+  // 시드 기반 셔플을 여러 번 시도해 가장 낮은 페널티 배치 선택
+  // 새 scoring 이 더 엄격하므로 시행 횟수 40 → 300 로 확장
+  // (20개 아이템 셔플+스코어는 초당 수만 회 가능 — 성능 부담 없음)
   let best = seededShuffle(bentoPool, rng);
   let bestScore = scoreArrangement(best);
-  for (let t = 0; t < 40 && bestScore > 0; t++) {
+  for (let t = 0; t < 300 && bestScore > 0; t++) {
     const cand = seededShuffle(bentoPool, rng);
     const s = scoreArrangement(cand);
     if (s < bestScore) { best = cand; bestScore = s; }
@@ -1289,17 +1489,175 @@ function getPatternForFilter(filterName, count) {
 
 let activeType = '하이라이트';
 
-function render() {
-  const grid = document.getElementById('bento');
-  // tags 기반 필터링: 하이라이트 = tags에 '하이라이트' 포함된 것만
-  let filtered = activeType === '하이라이트'
-    ? reviews.filter(r => r.tags && r.tags.includes('하이라이트'))
-    : reviews.filter(r => r.tags && r.tags.includes(activeType));
+// ============ 후기 ↔ 포지션 재배정 (카드 사이즈 피팅) ============
+// 공식:
+//   - 벽돌 패턴(getPatternForFilter의 순서/사이즈 분포)은 건드리지 않음
+//   - 각 후기는 제목 길이/줄수 기반 "최소 필요 카드 사이즈"를 가짐
+//   - 긴 제목 후기(3-4줄 또는 긴 한 줄)는 m+ 카드에, 짧은 제목은 xs/s 카드에 배치
+//   - 내러티브(best→sub→mainTag→id) 순서는 로컬 스왑 최소화로 가능한 보존
 
-  // 정렬 규칙:
-  // 1) best 파일 후기가 항상 상단, sub 파일 후기는 하단
-  // 2) best/sub 그룹 내에서는 메인태그 순서대로 묶이도록 정렬
-  // 3) 같은 메인태그 내에서는 최신 id 우선
+const sizeIdx = { xs: 0, s: 1, m: 2, l: 3, xl: 4 };
+const sizeNames = ['xs', 's', 'm', 'l', 'xl'];
+
+// 카드 사이즈별 가로/세로 여유 영역 계산 (CSS 변수 기반, DOM 불필요)
+function computeCardDims() {
+  const rootCS = getComputedStyle(document.documentElement);
+  const rowUnit = parseFloat(rootCS.getPropertyValue('--row-unit')) || 40;
+  const gap = parseFloat(rootCS.getPropertyValue('--gap')) || 8;
+  const edge = parseFloat(rootCS.getPropertyValue('--edge')) || 16;
+  // pad 는 clamp(9, 4.8vw, 18px) 등 복합식이라 rootCS.getPropertyValue 로는 resolve 안 됨
+  // → 샘플 카드의 실측 computed padding 을 사용. 샘플 없으면 뷰포트 기반 추정.
+  let padT, padB, padL, padR;
+  const sampleCard = document.querySelector('.cell');
+  if (sampleCard) {
+    const cs = getComputedStyle(sampleCard);
+    padT = parseFloat(cs.paddingTop) || 18;
+    padB = parseFloat(cs.paddingBottom) || 18;
+    padL = parseFloat(cs.paddingLeft) || 18;
+    padR = parseFloat(cs.paddingRight) || 18;
+  } else {
+    // fallback: clamp(9px, 4.8vw, 18px) 모방
+    const fallbackPad = Math.max(9, Math.min(18, window.innerWidth * 0.048));
+    padT = padB = padL = padR = fallbackPad;
+  }
+
+  // 데스크탑 (>=768px): body max-width 720px 적용
+  const isDesktop = window.innerWidth >= 768;
+  const bodyW = isDesktop ? Math.min(window.innerWidth, 720) : window.innerWidth;
+  const cardW = sampleCard ? sampleCard.clientWidth : ((bodyW - 2 * edge - gap) / 2);
+  const availW = cardW - padL - padR;
+
+  // cell-top 높이 (wrap 가능성 있는 narrow 에서도 실측으로 정확)
+  const topEl = sampleCard ? sampleCard.querySelector('.cell-top') : null;
+  const topH = topEl ? topEl.offsetHeight : (isDesktop ? 18 : 16);
+  const topMB = topEl ? (parseFloat(getComputedStyle(topEl).marginBottom) || 4) : 4;
+
+  const sizeRows = { xs: 3, s: 4, m: 5, l: 7, xl: 9 };
+  const availH = {};
+  for (const [size, rows] of Object.entries(sizeRows)) {
+    const cardH = rows * rowUnit + (rows - 1) * gap;
+    availH[size] = cardH - padT - padB - topH - topMB;
+  }
+  return { availW, availH };
+}
+
+// 히든 ruler 생성 — 제목 줄 폭 측정용 (100px 폰트 기준)
+function createRuler() {
+  const sampleKw = document.querySelector('.cell-keyword');
+  // 샘플이 없으면 CSS 값 추정 (초기 렌더 전 호출될 경우)
+  const kwCS = sampleKw ? getComputedStyle(sampleKw) : null;
+  const ruler = document.createElement('span');
+  ruler.style.cssText = [
+    'position:absolute','left:-99999px','top:-99999px',
+    'visibility:hidden','white-space:nowrap',
+    'font-family:' + (kwCS ? kwCS.fontFamily : "'KBLJump', sans-serif"),
+    'font-weight:' + (kwCS ? kwCS.fontWeight : '700'),
+    'font-size:100px',
+    'letter-spacing:' + (kwCS ? kwCS.letterSpacing : '-0.03em'),
+    'line-height:1.18'
+  ].join(';');
+  document.body.appendChild(ruler);
+  return ruler;
+}
+
+// 후기의 최소 필요 사이즈 계산 (목표 FS 기준)
+//   - 가로가 좁으면 .kw-line 자연 wrap 으로 줄 수가 늘어남 → 이것도 반영
+//   - 세로: effectiveLineCount × targetFS × 1.2 ≤ availH[size] (CSS line-height 와 일치)
+//   - 가로 넘침은 wrap으로 처리되지만, wrap이 세로를 늘리므로 세로 계산에 영향
+function classifyMinSize(review, targetFS, ruler, dims) {
+  const lines = getKeyword(review).split('\n');
+  if (!lines.length) return 0;
+  const availW = dims.availW;
+  // 각 의도된 줄이 실제로 몇 개의 시각 줄로 wrap 될지 계산
+  let effectiveLineCount = 0;
+  lines.forEach(line => {
+    ruler.textContent = line;
+    const naturalW = ruler.offsetWidth * (targetFS / 100);  // targetFS 기준 폭
+    const visualLines = Math.max(1, Math.ceil(naturalW / Math.max(availW, 1)));
+    effectiveLineCount += visualLines;
+  });
+  const LH_CSS = 1.2;
+  for (let k = 0; k < sizeNames.length; k++) {
+    const neededH = effectiveLineCount * targetFS * LH_CSS;
+    if (neededH <= dims.availH[sizeNames[k]]) {
+      return k;  // 이 사이즈부터 세로로 들어감
+    }
+  }
+  return sizeNames.length - 1;  // xl도 버거우면 xl
+}
+
+// 재배정: DESC zip + promote 2단계
+//  1) DESC zip: 큰 슬롯 ↔ 요구 큰 후기
+//  2) promote: 그래도 맞지 않는 슬롯은 사이즈 승격 (xs→s→m…)
+// 반환: { arranged, pattern } — pattern은 promote가 반영된 복제본
+function rearrangeForFit(filtered, pattern, targetFS) {
+  const n = filtered.length;
+  if (!n) return { arranged: [], pattern: [] };
+  const dims = computeCardDims();
+  const ruler = createRuler();
+
+  const minSizes = filtered.map(r => classifyMinSize(r, targetFS, ruler, dims));
+  ruler.remove();
+
+  // 1) DESC zip
+  const positions = pattern.map((p, i) => ({ idx: i, size: sizeIdx[p.h] }));
+  positions.sort((a, b) => {
+    if (b.size !== a.size) return b.size - a.size;
+    return a.idx - b.idx;
+  });
+  const reviewInfo = filtered.map((_, i) => ({ idx: i, minSize: minSizes[i] }));
+  reviewInfo.sort((a, b) => {
+    if (b.minSize !== a.minSize) return b.minSize - a.minSize;
+    return a.idx - b.idx;
+  });
+  const assignment = new Array(n);
+  for (let k = 0; k < n; k++) {
+    assignment[positions[k].idx] = reviewInfo[k].idx;
+  }
+
+  // 2) promote: pattern 복제 후, 요구 > 포지션이면 해당 포지션 승격
+  //    이 단계는 벽돌 분포(xs 15%, s 30% 등)를 살짝 바꿀 수 있으나,
+  //    사용자 정책상 "글자 잘림 방지 > 분포 유지" 이므로 승격 허용.
+  const promotedPattern = pattern.map(p => ({ h: p.h, v: p.v }));
+  for (let i = 0; i < n; i++) {
+    const revIdx = assignment[i];
+    const req = minSizes[revIdx];
+    const cur = sizeIdx[promotedPattern[i].h];
+    if (req > cur) {
+      promotedPattern[i].h = sizeNames[req];
+    }
+  }
+
+  return {
+    arranged: assignment.map(idx => filtered[idx]),
+    pattern: promotedPattern
+  };
+}
+
+// 필터별 재배정 결과 캐시 (resize 시 무효화)
+let _arrangementByFilter = {};
+
+// 중복 판정: "하이라이트" 를 제외한 태그 수가 2개 이상이면 다른 탭과 중복된 후기.
+// (하이라이트는 특별 쇼케이스 탭이라 중복 카운트에 포함 안 함)
+function isDuplicateAcrossTabs(r) {
+  if (!r.tags) return false;
+  let count = 0;
+  for (const t of r.tags) if (t !== '하이라이트') count++;
+  return count >= 2;
+}
+
+function getArrangementForFilter(filterType) {
+  if (_arrangementByFilter[filterType]) return _arrangementByFilter[filterType];
+
+  let filtered = filterType === '하이라이트'
+    ? reviews.filter(r => r.tags && r.tags.includes('하이라이트'))
+    : reviews.filter(r => r.tags && r.tags.includes(filterType));
+
+  // 유형별이사 / 실력의차이: 중복된 후기 제거 (이 두 탭은 고유 후기만 보여줌)
+  if (filterType === '유형별이사' || filterType === '실력의차이') {
+    filtered = filtered.filter(r => !isDuplicateAcrossTabs(r));
+  }
+
   const sourceRank = { 'best': 0, 'sub': 1 };
   filtered.sort((a, b) => {
     const s = (sourceRank[a.source] ?? 2) - (sourceRank[b.source] ?? 2);
@@ -1312,33 +1670,61 @@ function render() {
     return b.id - a.id;
   });
 
-  if (filtered.length === 0) {
+  if (!filtered.length) {
+    _arrangementByFilter[filterType] = { filtered: [], pattern: [], arranged: [] };
+    return _arrangementByFilter[filterType];
+  }
+
+  const pattern = getPatternForFilter(filterType, filtered.length);
+  // 목표 FS: 현재 뷰포트의 CSS 기본 FS (모바일 26 / 데스크탑 36)
+  const isDesktop = window.innerWidth >= 768;
+  const targetFS = isDesktop ? 36 : 26;
+  // rearrangeForFit 는 arranged + promotedPattern 을 반환
+  const { arranged, pattern: promotedPattern } = rearrangeForFit(filtered, pattern, targetFS);
+
+  _arrangementByFilter[filterType] = { filtered, pattern: promotedPattern, arranged };
+  return _arrangementByFilter[filterType];
+}
+
+function render() {
+  const grid = document.getElementById('bento');
+  const arr = getArrangementForFilter(activeType);
+  const { arranged, pattern } = arr;
+
+  if (!arranged.length) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;font-size:13px;opacity:0.5;letter-spacing:0.05em">결과 없음</div>';
     return;
   }
 
-  // HTML 특수문자 이스케이프 — 타이틀 내 큰따옴표·꺾쇠·앰퍼샌드가
-  // 속성/콘텐츠를 깨뜨리지 않도록 처리 (타이틀에 " 들어있는 후기 다수)
+  // HTML 특수문자 이스케이프
   const esc = s => String(s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-  // 필터별로 셔플된 패턴 가져오기 (같은 필터는 항상 같은 배치)
-  const patternForThisFilter = getPatternForFilter(activeType, filtered.length);
+  // 블루 오버라이드 적용 탭 = 하이라이트/유형별이사/실력의차이 를 제외한 나머지
+  const blueOverrideTabs = new Set([
+    '고난도돌파', '속전속결', '재이사맛집', '책임감', '친절응대', '정리정돈', '가격'
+  ]);
+  const applyBlueOverride = blueOverrideTabs.has(activeType);
 
-  grid.innerHTML = filtered.map((r, i) => {
-    const pattern = patternForThisFilter[i];
-    const keyword = esc(getKeyword(r));
+  grid.innerHTML = arranged.map((r, i) => {
+    const p = pattern[i];
+    // 체크용 블루 오버라이드: 다른 탭에서 중복 노출되는 후기 식별
+    const colorVariant = (applyBlueOverride && isDuplicateAcrossTabs(r))
+      ? 'blue'
+      : p.v;
+    // 제목을 줄 단위로 분할 → 각 줄을 .kw-line 스팬으로 감싸
+    const keywordHtml = getKeyword(r)
+      .split('\n')
+      .map(line => `<span class="kw-line">${esc(line)}</span>`)
+      .join('');
     const subKeyword = esc(typeLabel[r.type] || r.type);
     const ariaLabel = esc((r.newTitle || '').replace(/\n/g,' ') + ' — 후기 자세히 보기');
-
-    // parallax 제거됨 — card-index만 애니메이션 stagger용으로 사용
-    // 값은 최대 12로 cap → 카드가 많아도 후순위 카드가 너무 늦게 나타나지 않음
     const cappedIndex = Math.min(i, 12);
     const styleVars = `--card-index:${cappedIndex};`;
 
     return `
-      <article class="cell h-${pattern.h} v-${pattern.v}" data-id="${r.id}" style="${styleVars}" role="button" tabindex="0" aria-label="${ariaLabel}">
+      <article class="cell h-${p.h} v-${colorVariant}" data-id="${r.id}" style="${styleVars}" role="button" tabindex="0" aria-label="${ariaLabel}">
         <div class="cell-top">
           <span class="cell-sub">${subKeyword}</span>
           <svg class="cell-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1346,12 +1732,56 @@ function render() {
             <polyline points="8 7 17 7 17 16"/>
           </svg>
         </div>
-        <div class="cell-keyword">${keyword}</div>
+        <div class="cell-keyword">${keywordHtml}</div>
       </article>
     `;
   }).join('');
 
-  // (parallax 제거 — .settled 추가 불필요)
+  fitCardTitles();
+}
+
+// ============ 카드 타이틀 동적 폰트 사이징 (전역 단일 FS) ============
+// 핵심 공식 (깨뜨리지 말 것!):
+//   ① 모든 탭의 모든 카드 FS 동일 — 사이즈 무관하게 하나의 값
+//   ② 좁은 화면에서도 글자가 잘리면 안 됨 (FS가 줄어들어 수용)
+//   ③ 카드 내 제목은 좌측 하단 정렬 (margin-top:auto + align-items:flex-start)
+//   ④ 긴 제목 후기는 re-arrangement로 m+ 카드에 배정 (render 전 단계에서 처리)
+//   ⑤ 재배정 덕에 전역 minFS가 refFS(26/36)에 근접 → 큼직한 text
+//
+// 구현:
+//   - render() 가 getArrangementForFilter → rearrangeForFit 으로 이미 최적 배정 완료
+//   - computeGlobalCardFS 는 모든 필터의 arranged 리스트를 순회하며 최소 FS 산출
+//   - 사이즈 클래스별 구분 없이 단 하나의 전역 FS를 모든 카드에 주입
+
+// fitCardTitles: v04w10 기본 FS(모바일 26 / PC 36)를 CSS clamp으로 유지.
+// JS는 inline 제거만 — 글로벌 축소 없음. 공식:
+//   ① 모든 카드 동일 FS = CSS clamp(14, 6.8vw, 26) / PC 36
+//   ② 가로 초과 → .kw-line 자연 wrap 으로 대응 (유동적 줄바꿈)
+//   ③ 세로 초과 → buildArrangement 의 promote 단계에서 카드 사이즈 승격
+function fitCardTitles() {
+  const keywords = document.querySelectorAll('.cell-keyword');
+  if (!keywords.length) return;
+  keywords.forEach(kw => { kw.style.fontSize = ''; });
+}
+
+// 리사이즈/폰트로드 시 캐시 무효화 (arrangement + FS 모두 재계산)
+let _fitCardsTimer;
+function invalidateCardCaches() {
+  _arrangementByFilter = {};
+  _globalCardFS = null;
+}
+window.addEventListener('resize', () => {
+  clearTimeout(_fitCardsTimer);
+  _fitCardsTimer = setTimeout(() => {
+    invalidateCardCaches();
+    render();   // 재배정은 render에서 일어나므로 다시 호출
+  }, 120);
+});
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    invalidateCardCaches();
+    render();
+  });
 }
 
 // ============ 언더라인 탭 — 인디케이터 이동 + 중앙 스크롤 ============
