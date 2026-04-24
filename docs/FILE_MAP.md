@@ -100,3 +100,17 @@ Python 스크립트들. 재실행 가능.
 (행 번호는 버전마다 약간 달라질 수 있음. 함수 이름으로 grep 권장.)
 
 ---
+
+## 자주 찾는 코드 검색 팁
+
+```bash
+# HTML 파일 내 함수 찾기
+grep -n "function getArrangementForFilter" reviews_v04w27.html
+grep -n "scoreArrangement\|bentoPool\|titleBreaks" reviews_v04w27.html
+
+# CSS 속성 찾기
+grep -n "\.cell-keyword\|\.kw-line\|\.mt-line" reviews_v04w27.html
+
+# 상수 찾기
+grep -n "MAX_SIZE_RATIO\|SAFETY_W\|LH_CSS" reviews_v04w27.html
+```

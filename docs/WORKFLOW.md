@@ -195,4 +195,25 @@ const mainTagOrder = ['실력의차이', '가격', ..., '새탭명'];
 
 브라우저 DevTools 콘솔에서:
 ```js
-_arr
+_arrangementByFilter = {};
+_globalCardFS = null;
+render();
+```
+
+탭 전환/리사이즈 없이 재렌더 가능.
+
+---
+
+## 11. 버전 비교
+
+두 버전이 뭐가 다른지 확인할 때:
+
+```bash
+# Linux 샌드박스
+diff reviews_v04w26.html reviews_v04w27.html | head -100
+
+# 또는 특정 함수만
+grep -A 30 "function rearrangeForFit" reviews_v04w26.html > /tmp/old.txt
+grep -A 30 "function rearrangeForFit" reviews_v04w27.html > /tmp/new.txt
+diff /tmp/old.txt /tmp/new.txt
+```
