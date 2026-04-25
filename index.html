@@ -242,10 +242,13 @@
     letter-spacing: -0.01em;
     line-height: 1.7;
     text-align: center;        /* 중앙 정렬 */
+    text-wrap: balance;        /* v04w34 — 각 줄 길이 균등 분배해 시각적 정돈 (지원 브라우저) */
   }
   .banner-body strong {
     font-weight: 800;
   }
+  /* v04w31 — 모바일 전용 줄바꿈. PC에선 가려서 자연 wrap에 맡김 */
+  .banner-body br.m-only { display: inline; }
   @media (min-width: 768px) {
     .banner-inner {
       padding: 20px 24px;
@@ -258,6 +261,7 @@
       font-size: 16px;
       line-height: 1.7;
     }
+    .banner-body br.m-only { display: none; }
   }
 
   /* ============ 필터 바 (언더라인 탭 — 가로 스크롤) ============
@@ -567,6 +571,11 @@
     from { opacity: 0; }
     to   { opacity: 1; }
   }
+  /* v04w30 — 재렌더(리사이즈/폰트로드 등) 시엔 fade-in 차단해 깜빡임 방지.
+     첫 페인트 + 탭 변경 시에만 fade-in 활성. */
+  #bento.no-anim .cell {
+    animation: none !important;
+  }
 
   /* PC 휠 스크롤 방해 방지 — body 전체가 아니라 시트 열렸을 때만 contain 적용 */
   body.sheet-open {
@@ -858,10 +867,10 @@
 <div class="banner">
   <div class="banner-inner">
     <div class="banner-body">
-      아래의 후기들은 <strong>실제 이사를 마친 고객님들께서 직접 남긴 이야기</strong>입니다.<br>
-      칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다.<br>
-      그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다.<br>
-      다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유, <strong>직접 경험해보세요.</strong>
+      아래의 후기들은 <strong>실제 이사를 마친 고객님들께서 직접 남긴 이야기</strong>입니다. 칭찬 일색이라 어색하게 느껴지실 수 있습니다. 저희도 압니다.<br><br>
+      그런데 이사 업계에서 <strong>&ldquo;다음에도 꼭 여기서&rdquo;</strong>라는 말은 흔하지 않습니다.<br><br>
+      다음 이사 때 다시 부르고, 주변에 소개까지 하는 이유,<br>
+      <strong>직접 경험해보세요.</strong>
     </div>
   </div>
 </div>
@@ -1774,10 +1783,17 @@ function getArrangementForFilter(filterType) {
   return _arrangementByFilter[filterType];
 }
 
-function render() {
+function render(opts = {}) {
   const grid = document.getElementById('bento');
   const arr = getArrangementForFilter(activeType);
   const { arranged, pattern } = arr;
+
+  // v04w30 — 깜빡임 방지: skipAnim=true 면 fade-in 비활성 (resize/font-load 재렌더용)
+  if (opts.skipAnim) {
+    grid.classList.add('no-anim');
+  } else {
+    grid.classList.remove('no-anim');
+  }
 
   if (!arranged.length) {
     grid.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;font-size:13px;opacity:0.5;letter-spacing:0.05em">결과 없음</div>';
@@ -1851,17 +1867,23 @@ function invalidateCardCaches() {
   _arrangementByFilter = {};
   _globalCardFS = null;
 }
+// v04w30 — 모바일 주소창 토글로 인한 vh 변화는 무시.
+// 가로 폭(innerWidth)이 실제로 바뀐 경우에만 재렌더 → 카드 깜빡임 차단.
+let _lastWidth = window.innerWidth;
 window.addEventListener('resize', () => {
+  const newWidth = window.innerWidth;
+  if (newWidth === _lastWidth) return;
+  _lastWidth = newWidth;
   clearTimeout(_fitCardsTimer);
   _fitCardsTimer = setTimeout(() => {
     invalidateCardCaches();
-    render();   // 재배정은 render에서 일어나므로 다시 호출
+    render({ skipAnim: true });   // 재배정은 render에서 일어나므로 다시 호출
   }, 120);
 });
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(() => {
     invalidateCardCaches();
-    render();
+    render({ skipAnim: true });
   });
 }
 
@@ -2106,4 +2128,3 @@ render();
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                 
