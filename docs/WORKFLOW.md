@@ -217,3 +217,61 @@ grep -A 30 "function rearrangeForFit" reviews_v04w26.html > /tmp/old.txt
 grep -A 30 "function rearrangeForFit" reviews_v04w27.html > /tmp/new.txt
 diff /tmp/old.txt /tmp/new.txt
 ```
+
+---
+
+## 12. CSV 원본 기반 후기 복구 (v04w28에서 확립)
+
+html/md의 후기 본문이 과하게 축약되어 있을 때, **RAW_v01 CSV**를 골드 스탠다드로 복원하는 프로세스.
+상세 이력은 `docs/RECOVERY_LOG.md` 참조.
+
+### 전체 파이프라인
+
+```
+1. CSV 파싱 → csv_master.json
+2. html fullTextMap + md _edit 파싱 
+3. 3-way diff 실행 → 누락 매니페스트 생성
+4. diff 크기별 분류 (소규모 <50자 / 중규모 50~200자 / 대규모 200자+)
+5. Agent에 위임 or 직접 복구본 작성
+6. html fullTextMap에 일괄 반영
+7. _edit.md 블록 단위 동기화 (v2 스크립트)
+8. git commit + push + GitHub Pages 배포 (휴대폰 확인)
+```
+
+### 필수 체크리스트
+
+- [ ] 상호명 교정: GS / 지에스 → **이사짐캐리** (또는 짐캐리), "강봉원"은 유지
+- [ ] 조사 교정 (DESIGN_RULES §5 참조): 이사짐캐리**를/는/가/였/와/로/라고**
+- [ ] 줄 길이 규칙 v2 (DESIGN_RULES §6): 14~22자, 쉼표 합침, 마침표 뒤 새 줄
+- [ ] 문단 경계 `\n\n` (의미 단위로 5~10 문단)
+- [ ] 중복 문단 있으면 통합
+- [ ] 이모티콘/구어체 원본 보존
+- [ ] 검증: GS 잔여 0건, 잘못된 조사 0건
+
+### 스크립트 위치
+
+모두 `outputs/` (샌드박스: `/sessions/*/mnt/outputs/`):
+- `parse_csv_master.py` — CSV → JSON
+- `three_way_diff.py` — 3-way diff
+- `apply_md_v2.py` — md 블록 단위 안전 반영 (**v1은 정규식 버그, 사용 금지**)
+- `apply_medium_large.py` — html 라인 단위 반영 샘플
+
+### Agent 위임 템플릿 (대량 복구 시)
+
+34건 이상 복구할 땐 Agent에 위임 (단일 세션 내 Claude가 직접 쓰면 context 폭발).
+
+입력 JSON 구조:
+```json
+{
+  "html_id": 49, "nickname": "...", "date": "...",
+  "csv_body_raw": "...", "html_current": "...",
+  "diff_chars": 1095, "mainTag": "...", "newTitle": "..."
+}
+```
+
+출력 JSON 구조:
+```json
+{ "49": {"html_body": "...", "notes": "복원 포인트 1~2줄"} }
+```
+
+프롬프트 샘플은 `outputs/` 안의 agent 작업 이력 참조 — 핵심은 "csv_body_raw가 진실, html_current는 참고만" 명시.

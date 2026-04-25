@@ -12,9 +12,9 @@
 
 **루트에는 최신 2개 버전만 유지** (자동 아카이브 규칙 적용 — `CLAUDE.md` 참조)
 
-- `index.html` — 초기 랜딩 페이지 (보조, 버전 관리 대상 아님)
-- `reviews_v04w27.html` — **현재 최신 안정 버전** ← 작업 시 이 버전 참조
-- `reviews_v04w26.html` — 바로 전 버전 (빠른 롤백/비교용, 루트 유지)
+- `index.html` — **공개 페이지 (GitHub Pages에서 서빙)**. 현재 v04w28 내용과 동기화됨. commit/push 시 이 파일이 배포됨.
+- `reviews_v04w28.html` — **현재 최신 안정 버전** ← 작업 시 이 버전 참조 (후기 본문 CSV 복구 74건 반영)
+- `reviews_v04w28.html` — 바로 전 버전 (빠른 롤백/비교용, 루트 유지)
 
 ### 하위 폴더
 
@@ -35,26 +35,28 @@
 
 ### `seperateReviewFiles/` (작업 대상)
 
+`C:\Users\Alon\Documents\Claude\Projects\ClientProof\resources\seperateReviewFiles\` 위치.
 후기 원본(복구 버전) 마크다운. 8개 파일 × 총 78개 후기.
 
-- `zmcReview_best_01_edit.md` — 10 리뷰
-- `zmcReview_best_02_edit.md` — 10 리뷰
-- `zmcReview_best_03_edit.md` — 10 리뷰
-- `zmcReview_best_04_edit.md` — 12 리뷰
-- `zmcReview_sub_01_edit.md` — 10 리뷰
-- `zmcReview_sub_02_edit.md` — 8 리뷰
-- `zmcReview_sub_03_edit.md` — 9 리뷰
-- `zmcReview_sub_04_edit.md` — 9 리뷰
+- `zmcReview_best_01_edit.md` — 10 리뷰 (id 085, 084, 082, 080, 079, 078, 077, 076, 075, 073)
+- `zmcReview_best_02_edit.md` — 10 리뷰 (id 072, 069, 068, 067, 066, 065, 064, 063, 062, 061)
+- `zmcReview_best_03_edit.md` — 10 리뷰 (id 058, 057, 056, 055, 052, 051, 049, 048, 046, 044)
+- `zmcReview_best_04_edit.md` — 12 리뷰 (id 040, 039, 038, 033, 032, 029, 027, 026, 023, 016, 010, 007)
+- `zmcReview_sub_01_edit.md` — 10 리뷰 (id 083, 081, 074, 071, 070, 060, 059, 054, 053, 050)
+- `zmcReview_sub_02_edit.md` — 8 리뷰 (id 047, 045, 043, 042, 036, 035, 034, 031)
+- `zmcReview_sub_03_edit.md` — 9 리뷰 (id 030, 028, 025, 024, 022, 021, 019, 015, 014)
+- `zmcReview_sub_04_edit.md` — 9 리뷰 (id 013, 012, 011, 009, 008, 006, 004, 003, 001)
 
-### 백업 폴더
+### 원본 소스 (진리 레이어)
 
-- `seperateReviewFiles_backup_v1/` — 최초 원본 (모든 정제 전)
-- `seperateReviewFiles_backup_v2/` — 문단 재구성 완료 후, 상호명/줄바꿈 작업 전
+- **`RAW_v01/강봉원_고객감동후기_모음 - 시트1 (1).csv`** — **진짜 원본(골드 스탠다드)**. CSV 파싱 후 `csv_master.json`으로 추출해서 복구에 사용.
+- `RAW_v01/강봉원_고객감동후기_모음_20260417.md` — CSV를 md로 변환한 것 (참고용)
+- `RAW_v02/zmcReview_*.md` — 분리된 원본 (일부 디테일 소실)
+- `RAW_v02/이사짐캐리_선정후기_42개.md` / `이사짐캐리_보조후기_41개.md` — 분리 전 중간본
 
 ### 기타
 
-- `RAW/` — 원천 데이터 (가공 전)
-- `상호명교체 전 수정파일/` — 상호명 교체 전 한글 상태
+- `cafeCapture/` — 네이버 카페 원문 PDF (제니퍼.pdf 등 — CSV 검증용)
 
 ---
 
@@ -72,7 +74,7 @@ Python 스크립트들. 재실행 가능.
 
 ---
 
-## HTML 내부 주요 위치 (reviews_v04w27.html 기준)
+## HTML 내부 주요 위치 (reviews_v04w28.html 기준)
 
 | 대략 라인 | 내용 |
 |---|---|
@@ -105,12 +107,12 @@ Python 스크립트들. 재실행 가능.
 
 ```bash
 # HTML 파일 내 함수 찾기
-grep -n "function getArrangementForFilter" reviews_v04w27.html
-grep -n "scoreArrangement\|bentoPool\|titleBreaks" reviews_v04w27.html
+grep -n "function getArrangementForFilter" reviews_v04w28.html
+grep -n "scoreArrangement\|bentoPool\|titleBreaks" reviews_v04w28.html
 
 # CSS 속성 찾기
-grep -n "\.cell-keyword\|\.kw-line\|\.mt-line" reviews_v04w27.html
+grep -n "\.cell-keyword\|\.kw-line\|\.mt-line" reviews_v04w28.html
 
 # 상수 찾기
-grep -n "MAX_SIZE_RATIO\|SAFETY_W\|LH_CSS" reviews_v04w27.html
+grep -n "MAX_SIZE_RATIO\|SAFETY_W\|LH_CSS" reviews_v04w28.html
 ```
